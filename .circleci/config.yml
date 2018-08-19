@@ -50,7 +50,6 @@ jobs:
             - run:
                 name: "Set Up Laravel"
                 command: |
-                    mkdir tests/Browser/screenshots
                     rm .env.testing -f
                     cp .env.circle .env
                     cp .env.circle .env.testing
