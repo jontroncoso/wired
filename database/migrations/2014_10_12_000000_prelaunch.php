@@ -21,6 +21,7 @@ class Prelaunch extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('metabolism');
             $table->rememberToken();
             $table->timestamps();
         });

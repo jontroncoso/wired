@@ -37,4 +37,19 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(\App\Model\Drink::class, 'sips', 'user_id', 'drink_id');
     }
+
+    protected function getBclAttribute()
+    {
+        $metabolism = $this->metabolism;
+        $return = $this->sips()
+            ->with('drink')
+            ->get()
+            ->map(function($sip) use ($metabolism) {
+                $time = intval(time()-$sip->created_at->timestamp);
+                // return $sip->drink->dosage*(1/pow($metabolism, $time));
+                return exp(-(1/$metabolism*$time) + log($sip->drink->dosage));
+            })
+            ->sum();
+        return $return;
+    }
 }
