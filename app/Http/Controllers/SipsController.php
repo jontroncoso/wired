@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\Sip;
 use Illuminate\Http\Request;
+use App\Http\Requests\SipRequest;
 
 class SipsController extends Controller
 {
@@ -24,9 +25,11 @@ class SipsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SipRequest $request)
     {
-        //
+        return response()->json([
+            'sip' => Sip::create($request->validated() + ['user_id' => \Auth::user()->id])->load('drink')
+        ]);
     }
 
     /**
