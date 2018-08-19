@@ -54,6 +54,7 @@ jobs:
                     cp .env.circle .env
                     cp .env.circle .env.testing
                     php artisan key:generate
+                    php artisan jwt:secret
 
             - run:
                 name: Serve Application
