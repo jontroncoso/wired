@@ -56,7 +56,6 @@ jobs:
                     cp .env.circle .env.testing
                     php artisan key:generate
 
-
             - run:
                 name: Serve Application
                 background: true
