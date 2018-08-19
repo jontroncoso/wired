@@ -79,7 +79,6 @@ jobs:
                     php artisan migrate:fresh --seeder=DevSeeder
                     ./vendor/bin/phpunit
 
-
             - store_artifacts:
                 path: tests/Browser/screenshots
 
