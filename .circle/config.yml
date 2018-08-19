@@ -62,17 +62,6 @@ jobs:
                 background: true
                 command: php artisan serve
 
-            # - run:
-            #     name: Start Chrome Driver
-            #     command: chromedriver
-            #     background: true
-
-            # - run:
-            #     name: "Run Dusk Tests"
-            #     command: |
-            #         php artisan migrate:fresh
-            #         php artisan dusk &>> storage/logs/dusk.log
-
             - run:
                 name: "Run PHPUnit Tests"
                 command: |
