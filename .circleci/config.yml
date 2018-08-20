@@ -73,6 +73,10 @@ jobs:
             #         php artisan dusk &>> storage/logs/dusk.log
 
             - run:
+                name: "Run Linter"
+                command: npm run lint
+
+            - run:
                 name: "Run PHPUnit Tests"
                 command: npm run test
 
