@@ -1,7 +1,8 @@
 {
     "private": true,
     "scripts": {
-        "test": "> ./storage/logs/laravel.log && php artisan migrate:fresh --seeder=DevSeeder --env=testing && ./vendor/bin/phpunit",
+        "test": "> ./storage/logs/laravel.log && php artisan migrate:fresh && ./vendor/bin/phpunit",
+        "test-fast": "> ./storage/logs/laravel.log && ./vendor/bin/phpunit",
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch": "npm run development -- --watch",

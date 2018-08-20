@@ -74,9 +74,7 @@ jobs:
 
             - run:
                 name: "Run PHPUnit Tests"
-                command: |
-                    php artisan migrate:fresh
-                    ./vendor/bin/phpunit
+                command: npm run test-fast
 
             - store_artifacts:
                 path: tests/Browser/screenshots

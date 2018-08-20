@@ -6,6 +6,6 @@ $factory->define(App\Model\Drink::class, function (Faker $faker) {
     return [
         'name'          => $faker->name,
         'description'   => $faker->paragraph,
-        'dosage'        => $faker->randomNumber,
+        'dosage'        => $faker->numberBetween(100, 1000),
     ];
 });
