@@ -18,8 +18,9 @@
     "sourceType": "module"
     },
     "rules": {
+        "no-unused-vars": ["off"],
         "indent": [
-            "error",
+            "off",
             4
         ],
         "linebreak-style": [
@@ -27,11 +28,11 @@
             "unix"
         ],
         "quotes": [
-            "error",
+            "off",
             "single"
         ],
         "semi": [
-            "error",
+            "off",
             "always"
         ],
         "react/no-unescaped-entities": 0

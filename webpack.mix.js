@@ -1,7 +1,7 @@
 let mix = require('laravel-mix');
 require('laravel-mix-eslint');
 
-mix.react('resources/assets/js/app.js', 'public/js')
+mix.react('resources/assets/js/index.jsx', 'public/js')
     .eslint({
         fix: false,
         cache: false,
