@@ -22,7 +22,8 @@ class SipsApiTest extends TestCase
 
         $this->json('GET', '/api/sips/')
             ->assertStatus(200)
-            ->assertDontSee($drink);
+            ->assertDontSee($drink)
+            ->assertJsonFragment(['bcl' => 0]);
 
         \App\Model\Sip::create([
             'user_id'   => $user->id,
@@ -31,7 +32,8 @@ class SipsApiTest extends TestCase
 
         $this->json('GET', '/api/sips/')
             ->assertStatus(200)
-            ->assertSee($drink->fresh());
+            ->assertSee($drink->fresh())
+            ->assertJsonMissing(['bcl' => 0]);
     }
 
     public function testCreateSips()
@@ -50,7 +52,7 @@ class SipsApiTest extends TestCase
 
         $this->json('GET', '/api/sips/')
             ->assertStatus(200)
-            ->assertSee($drink->fresh());
-
+            ->assertSee($drink)
+            ->assertJsonMissing(['bcl' => 0]);
     }
 }

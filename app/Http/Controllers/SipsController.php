@@ -16,7 +16,10 @@ class SipsController extends Controller
     public function index()
     {
         $user = \Auth::user();
-        return response()->json($user->sips()->with('drink')->get());
+        return response()->json([
+            'sips'  => $user->sips()->with('drink')->get(),
+            'bcl'   => $user->bcl,
+        ]);
     }
 
     /**
