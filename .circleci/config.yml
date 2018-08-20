@@ -74,7 +74,7 @@ jobs:
 
             - run:
                 name: "Run PHPUnit Tests"
-                command: npm run test-fast
+                command: npm run test
 
             - store_artifacts:
                 path: tests/Browser/screenshots
