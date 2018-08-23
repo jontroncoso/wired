@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
+Route::any( '{all}', function( $page ){
     return view('welcome');
-});
+})->where('all', '.*');

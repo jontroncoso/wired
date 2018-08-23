@@ -32,6 +32,16 @@ class AuthController extends Controller
 
         return $this->respondWithToken($token);
     }
+    public function register(AuthRequest $request)
+    {
+        $credentials = $request->only(['email', 'password', 'confirm']);
+
+        if (! $token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
 
     /**
      * Get the authenticated User.

@@ -20,7 +20,7 @@
     "rules": {
         "no-unused-vars": ["off"],
         "indent": [
-            "off",
+            "error",
             4
         ],
         "linebreak-style": [
@@ -28,7 +28,7 @@
             "unix"
         ],
         "quotes": [
-            "off",
+            "error",
             "single"
         ],
         "semi": [

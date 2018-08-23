@@ -498,18 +498,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _fakeBackend = __webpack_require__(76);
-
-Object.keys(_fakeBackend).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _fakeBackend[key];
-    }
-  });
-});
-
 var _history = __webpack_require__(77);
 
 Object.keys(_history).forEach(function (key) {
@@ -542,6 +530,18 @@ Object.keys(_authHeader).forEach(function (key) {
     enumerable: true,
     get: function get() {
       return _authHeader[key];
+    }
+  });
+});
+
+var _PrivateRoute = __webpack_require__(131);
+
+Object.keys(_PrivateRoute).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _PrivateRoute[key];
     }
   });
 });
@@ -3412,11 +3412,6 @@ var _helpers = __webpack_require__(10);
 var _App = __webpack_require__(94);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(0, _helpers.configureFakeBackend)();
-
-// setup fake backend
-
 
 (0, _reactDom.render)(_react2.default.createElement(
     _reactRedux.Provider,
@@ -24330,167 +24325,7 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
 }
 
 /***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.configureFakeBackend = configureFakeBackend;
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-// array in local storage for registered users
-var users = JSON.parse(localStorage.getItem('users')) || [];
-
-function configureFakeBackend() {
-    var realFetch = window.fetch;
-    window.fetch = function (url, opts) {
-        return new Promise(function (resolve, reject) {
-            // wrap in timeout to simulate server api call
-            setTimeout(function () {
-
-                // authenticate
-                if (url.endsWith('/users/authenticate') && opts.method === 'POST') {
-                    // get parameters from post request
-                    var params = JSON.parse(opts.body);
-
-                    // find if any user matches login credentials
-                    var filteredUsers = users.filter(function (user) {
-                        return user.username === params.username && user.password === params.password;
-                    });
-
-                    if (filteredUsers.length) {
-                        // if login details are valid return user details and fake jwt token
-                        var user = filteredUsers[0];
-                        var responseJson = {
-                            id: user.id,
-                            username: user.username,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                            token: 'fake-jwt-token'
-                        };
-                        resolve({ ok: true, text: function text() {
-                                return Promise.resolve(JSON.stringify(responseJson));
-                            } });
-                    } else {
-                        // else return error
-                        reject('Username or password is incorrect');
-                    }
-
-                    return;
-                }
-
-                // get users
-                if (url.endsWith('/users') && opts.method === 'GET') {
-                    // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
-                    if (opts.headers && opts.headers.Authorization === 'Bearer fake-jwt-token') {
-                        resolve({ ok: true, text: function text() {
-                                return Promise.resolve(JSON.stringify(users));
-                            } });
-                    } else {
-                        // return 401 not authorised if token is null or invalid
-                        reject('Unauthorised');
-                    }
-
-                    return;
-                }
-
-                // get user by id
-                if (url.match(/\/users\/\d+$/) && opts.method === 'GET') {
-                    // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
-                    if (opts.headers && opts.headers.Authorization === 'Bearer fake-jwt-token') {
-                        // find user by id in users array
-                        var urlParts = url.split('/');
-                        var id = parseInt(urlParts[urlParts.length - 1]);
-                        var matchedUsers = users.filter(function (user) {
-                            return user.id === id;
-                        });
-                        var _user = matchedUsers.length ? matchedUsers[0] : null;
-
-                        // respond 200 OK with user
-                        resolve({ ok: true, text: function text() {
-                                return JSON.stringify(_user);
-                            } });
-                    } else {
-                        // return 401 not authorised if token is null or invalid
-                        reject('Unauthorised');
-                    }
-
-                    return;
-                }
-
-                // register user
-                if (url.endsWith('/users/register') && opts.method === 'POST') {
-                    // get new user object from post body
-                    var newUser = JSON.parse(opts.body);
-
-                    // validation
-                    var duplicateUser = users.filter(function (user) {
-                        return user.username === newUser.username;
-                    }).length;
-                    if (duplicateUser) {
-                        reject('Username "' + newUser.username + '" is already taken');
-                        return;
-                    }
-
-                    // save new user
-                    newUser.id = users.length ? Math.max.apply(Math, _toConsumableArray(users.map(function (user) {
-                        return user.id;
-                    }))) + 1 : 1;
-                    users.push(newUser);
-                    localStorage.setItem('users', JSON.stringify(users));
-
-                    // respond 200 OK
-                    resolve({ ok: true, text: function text() {
-                            return Promise.resolve();
-                        } });
-
-                    return;
-                }
-
-                // delete user
-                if (url.match(/\/users\/\d+$/) && opts.method === 'DELETE') {
-                    // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
-                    if (opts.headers && opts.headers.Authorization === 'Bearer fake-jwt-token') {
-                        // find user by id in users array
-                        var _urlParts = url.split('/');
-                        var _id = parseInt(_urlParts[_urlParts.length - 1]);
-                        for (var i = 0; i < users.length; i++) {
-                            var _user2 = users[i];
-                            if (_user2.id === _id) {
-                                // delete user
-                                users.splice(i, 1);
-                                localStorage.setItem('users', JSON.stringify(users));
-                                break;
-                            }
-                        }
-
-                        // respond 200 OK
-                        resolve({ ok: true, text: function text() {
-                                return Promise.resolve();
-                            } });
-                    } else {
-                        // return 401 not authorised if token is null or invalid
-                        reject('Unauthorised');
-                    }
-
-                    return;
-                }
-
-                // pass through any requests not handled above
-                realFetch(url, opts).then(function (response) {
-                    return resolve(response);
-                });
-            }, 500);
-        });
-    };
-}
-
-/***/ }),
+/* 76 */,
 /* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25492,7 +25327,7 @@ thunk.withExtraArgument = createThunkMiddleware;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _redux = __webpack_require__(17);
@@ -25506,10 +25341,10 @@ var _users = __webpack_require__(91);
 var _alert = __webpack_require__(92);
 
 var rootReducer = (0, _redux.combineReducers)({
-  authentication: _authentication.authentication,
-  registration: _registration.registration,
-  users: _users.users,
-  alert: _alert.alert
+    authentication: _authentication.authentication,
+    registration: _registration.registration,
+    users: _users.users,
+    alert: _alert.alert
 });
 
 exports.default = rootReducer;
@@ -25522,7 +25357,7 @@ exports.default = rootReducer;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.authentication = authentication;
 
@@ -25532,27 +25367,27 @@ var user = JSON.parse(localStorage.getItem('user'));
 var initialState = user ? { loggedIn: true, user: user } : {};
 
 function authentication() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
-  var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+    var action = arguments[1];
 
-  switch (action.type) {
-    case _constants.userConstants.LOGIN_REQUEST:
-      return {
-        loggingIn: true,
-        user: action.user
-      };
-    case _constants.userConstants.LOGIN_SUCCESS:
-      return {
-        loggedIn: true,
-        user: action.user
-      };
-    case _constants.userConstants.LOGIN_FAILURE:
-      return {};
-    case _constants.userConstants.LOGOUT:
-      return {};
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case _constants.userConstants.LOGIN_REQUEST:
+            return {
+                loggingIn: true,
+                user: action.user
+            };
+        case _constants.userConstants.LOGIN_SUCCESS:
+            return {
+                loggedIn: true,
+                user: action.user
+            };
+        case _constants.userConstants.LOGIN_FAILURE:
+            return {};
+        case _constants.userConstants.LOGOUT:
+            return {};
+        default:
+            return state;
+    }
 }
 
 /***/ }),
@@ -25609,26 +25444,26 @@ var userConstants = exports.userConstants = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.registration = registration;
 
 var _constants = __webpack_require__(5);
 
 function registration() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
 
-  switch (action.type) {
-    case _constants.userConstants.REGISTER_REQUEST:
-      return { registering: true };
-    case _constants.userConstants.REGISTER_SUCCESS:
-      return {};
-    case _constants.userConstants.REGISTER_FAILURE:
-      return {};
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case _constants.userConstants.REGISTER_REQUEST:
+            return { registering: true };
+        case _constants.userConstants.REGISTER_SUCCESS:
+            return {};
+        case _constants.userConstants.REGISTER_FAILURE:
+            return {};
+        default:
+            return state;
+    }
 }
 
 /***/ }),
@@ -25639,60 +25474,60 @@ function registration() {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.users = users;
 
 var _constants = __webpack_require__(5);
 
 function users() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
 
-  switch (action.type) {
-    case _constants.userConstants.GETALL_REQUEST:
-      return {
-        loading: true
-      };
-    case _constants.userConstants.GETALL_SUCCESS:
-      return {
-        items: action.users
-      };
-    case _constants.userConstants.GETALL_FAILURE:
-      return {
-        error: action.error
-      };
-    case _constants.userConstants.DELETE_REQUEST:
-      // add 'deleting:true' property to user being deleted
-      return Object.assign({}, state, {
-        items: state.items.map(function (user) {
-          return user.id === action.id ? Object.assign({}, user, { deleting: true }) : user;
-        })
-      });
-    case _constants.userConstants.DELETE_SUCCESS:
-      // remove deleted user from state
-      return {
-        items: state.items.filter(function (user) {
-          return user.id !== action.id;
-        })
-      };
-    case _constants.userConstants.DELETE_FAILURE:
-      // remove 'deleting:true' property and add 'deleteError:[error]' property to user
-      return Object.asign({}, state, { items: state.items.map(function (user) {
-          if (user.id === action.id) {
-            // make copy of user without 'deleting:true' property
-            var userCopy = Object.assign({}, user);
-            delete userCopy.deleting;
-            // return copy of user with 'deleteError:[error]' property
-            return Object.assign({}, userCopy, { deleteError: action.error });
-          }
+    switch (action.type) {
+        case _constants.userConstants.GETALL_REQUEST:
+            return {
+                loading: true
+            };
+        case _constants.userConstants.GETALL_SUCCESS:
+            return {
+                items: action.users
+            };
+        case _constants.userConstants.GETALL_FAILURE:
+            return {
+                error: action.error
+            };
+        case _constants.userConstants.DELETE_REQUEST:
+            // add 'deleting:true' property to user being deleted
+            return Object.assign({}, state, {
+                items: state.items.map(function (user) {
+                    return user.id === action.id ? Object.assign({}, user, { deleting: true }) : user;
+                })
+            });
+        case _constants.userConstants.DELETE_SUCCESS:
+            // remove deleted user from state
+            return {
+                items: state.items.filter(function (user) {
+                    return user.id !== action.id;
+                })
+            };
+        case _constants.userConstants.DELETE_FAILURE:
+            // remove 'deleting:true' property and add 'deleteError:[error]' property to user
+            return Object.asign({}, state, { items: state.items.map(function (user) {
+                    if (user.id === action.id) {
+                        // make copy of user without 'deleting:true' property
+                        var userCopy = Object.assign({}, user);
+                        delete userCopy.deleting;
+                        // return copy of user with 'deleteError:[error]' property
+                        return Object.assign({}, userCopy, { deleteError: action.error });
+                    }
 
-          return user;
-        })
-      });
-    default:
-      return state;
-  }
+                    return user;
+                })
+            });
+        default:
+            return state;
+    }
 }
 
 /***/ }),
@@ -25703,32 +25538,32 @@ function users() {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.alert = alert;
 
 var _constants = __webpack_require__(5);
 
 function alert() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
 
-  switch (action.type) {
-    case _constants.alertConstants.SUCCESS:
-      return {
-        type: 'alert-success',
-        message: action.message
-      };
-    case _constants.alertConstants.ERROR:
-      return {
-        type: 'alert-danger',
-        message: action.message
-      };
-    case _constants.alertConstants.CLEAR:
-      return {};
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case _constants.alertConstants.SUCCESS:
+            return {
+                type: 'alert-success',
+                message: action.message
+            };
+        case _constants.alertConstants.ERROR:
+            return {
+                type: 'alert-danger',
+                message: action.message
+            };
+        case _constants.alertConstants.CLEAR:
+            return {};
+        default:
+            return state;
+    }
 }
 
 /***/ }),
@@ -25804,12 +25639,6 @@ var _actions = __webpack_require__(9);
 
 var _components = __webpack_require__(118);
 
-var _HomePage = __webpack_require__(120);
-
-var _LoginPage = __webpack_require__(122);
-
-var _RegisterPage = __webpack_require__(124);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25860,9 +25689,9 @@ var App = function (_React$Component) {
                             _react2.default.createElement(
                                 'div',
                                 null,
-                                _react2.default.createElement(_components.PrivateRoute, { exact: true, path: '/', component: _HomePage.HomePage }),
-                                _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _LoginPage.LoginPage }),
-                                _react2.default.createElement(_reactRouterDom.Route, { path: '/register', component: _RegisterPage.RegisterPage })
+                                _react2.default.createElement(_helpers.PrivateRoute, { exact: true, path: '/', component: _components.HomePage }),
+                                _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _components.LoginPage }),
+                                _react2.default.createElement(_reactRouterDom.Route, { path: '/register', component: _components.RegisterPage })
                             )
                         )
                     )
@@ -27005,13 +26834,12 @@ function login(username, password) {
         body: JSON.stringify({ username: username, password: password })
     };
 
-    return fetch('/users/authenticate', requestOptions).then(handleResponse).then(function (user) {
+    return fetch('/api/auth/login', requestOptions).then(handleResponse).then(function (user) {
         // login successful if there's a jwt token in the response
         if (user.token) {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('user', JSON.stringify(user));
         }
-
         return user;
     });
 }
@@ -27046,7 +26874,7 @@ function register(user) {
         body: JSON.stringify(user)
     };
 
-    return fetch('/users/register', requestOptions).then(handleResponse);
+    return fetch('/api/auth/register', requestOptions).then(handleResponse);
 }
 
 function update(user) {
@@ -27073,12 +26901,6 @@ function handleResponse(response) {
     return response.text().then(function (text) {
         var data = text && JSON.parse(text);
         if (!response.ok) {
-            if (response.status === 401) {
-                // auto logout if 401 response returned from api
-                logout();
-                location.reload(true);
-            }
-
             var error = data && data.message || response.statusText;
             return Promise.reject(error);
         }
@@ -27098,20 +26920,52 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _PrivateRoute = __webpack_require__(119);
+var _HomePage = __webpack_require__(132);
 
-Object.keys(_PrivateRoute).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _PrivateRoute[key];
-    }
-  });
+Object.defineProperty(exports, 'HomePage', {
+  enumerable: true,
+  get: function get() {
+    return _HomePage.HomePage;
+  }
+});
+
+var _LoginPage = __webpack_require__(133);
+
+Object.defineProperty(exports, 'LoginPage', {
+  enumerable: true,
+  get: function get() {
+    return _LoginPage.LoginPage;
+  }
+});
+
+var _RegisterPage = __webpack_require__(134);
+
+Object.defineProperty(exports, 'RegisterPage', {
+  enumerable: true,
+  get: function get() {
+    return _RegisterPage.RegisterPage;
+  }
 });
 
 /***/ }),
-/* 119 */
+/* 119 */,
+/* 120 */,
+/* 121 */,
+/* 122 */,
+/* 123 */,
+/* 124 */,
+/* 125 */,
+/* 126 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 127 */,
+/* 128 */,
+/* 129 */,
+/* 130 */,
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27145,30 +26999,7 @@ var PrivateRoute = function PrivateRoute(_ref) {
 exports.PrivateRoute = PrivateRoute;
 
 /***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _HomePage = __webpack_require__(121);
-
-Object.keys(_HomePage).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _HomePage[key];
-    }
-  });
-});
-
-/***/ }),
-/* 121 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27238,7 +27069,7 @@ var HomePage = function (_React$Component) {
                     'h1',
                     null,
                     'Hi ',
-                    user.firstName,
+                    user.name,
                     '!'
                 ),
                 _react2.default.createElement(
@@ -27269,7 +27100,7 @@ var HomePage = function (_React$Component) {
                         return _react2.default.createElement(
                             'li',
                             { key: user.id },
-                            user.firstName + ' ' + user.lastName,
+                            user.name + ' ' + user.lastName,
                             user.deleting ? _react2.default.createElement(
                                 'em',
                                 null,
@@ -27323,30 +27154,7 @@ var connectedHomePage = (0, _reactRedux.connect)(mapStateToProps)(HomePage);
 exports.HomePage = connectedHomePage;
 
 /***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _LoginPage = __webpack_require__(123);
-
-Object.keys(_LoginPage).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _LoginPage[key];
-    }
-  });
-});
-
-/***/ }),
-/* 123 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27510,30 +27318,7 @@ var connectedLoginPage = (0, _reactRedux.connect)(mapStateToProps)(LoginPage);
 exports.LoginPage = connectedLoginPage;
 
 /***/ }),
-/* 124 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _RegisterPage = __webpack_require__(125);
-
-Object.keys(_RegisterPage).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _RegisterPage[key];
-    }
-  });
-});
-
-/***/ }),
-/* 125 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27578,10 +27363,10 @@ var RegisterPage = function (_React$Component) {
 
         _this.state = {
             user: {
-                firstName: '',
-                lastName: '',
-                username: '',
-                password: ''
+                email: '',
+                name: '',
+                password: '',
+                confirm: ''
             },
             submitted: false
         };
@@ -27612,7 +27397,7 @@ var RegisterPage = function (_React$Component) {
             var user = this.state.user;
             var dispatch = this.props.dispatch;
 
-            if (user.firstName && user.lastName && user.username && user.password) {
+            if (user.name && user.email && user.password && user.confirm) {
                 dispatch(_actions.userActions.register(user));
             }
         }
@@ -27637,29 +27422,14 @@ var RegisterPage = function (_React$Component) {
                     { name: 'form', onSubmit: this.handleSubmit },
                     _react2.default.createElement(
                         'div',
-                        { className: 'form-group' + (submitted && !user.firstName ? ' has-error' : '') },
+                        { className: 'form-group' + (submitted && !user.email ? ' has-error' : '') },
                         _react2.default.createElement(
                             'label',
-                            { htmlFor: 'firstName' },
-                            'First Name'
+                            { htmlFor: 'name' },
+                            'Email'
                         ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'firstName', value: user.firstName, onChange: this.handleChange }),
-                        submitted && !user.firstName && _react2.default.createElement(
-                            'div',
-                            { className: 'help-block' },
-                            'First Name is required'
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' + (submitted && !user.lastName ? ' has-error' : '') },
-                        _react2.default.createElement(
-                            'label',
-                            { htmlFor: 'lastName' },
-                            'Last Name'
-                        ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'lastName', value: user.lastName, onChange: this.handleChange }),
-                        submitted && !user.lastName && _react2.default.createElement(
+                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'email', value: user.email, onChange: this.handleChange }),
+                        submitted && !user.email && _react2.default.createElement(
                             'div',
                             { className: 'help-block' },
                             'Last Name is required'
@@ -27667,14 +27437,14 @@ var RegisterPage = function (_React$Component) {
                     ),
                     _react2.default.createElement(
                         'div',
-                        { className: 'form-group' + (submitted && !user.username ? ' has-error' : '') },
+                        { className: 'form-group' + (submitted && !user.name ? ' has-error' : '') },
                         _react2.default.createElement(
                             'label',
-                            { htmlFor: 'username' },
+                            { htmlFor: 'name' },
                             'Username'
                         ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'username', value: user.username, onChange: this.handleChange }),
-                        submitted && !user.username && _react2.default.createElement(
+                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'name', value: user.name, onChange: this.handleChange }),
+                        submitted && !user.name && _react2.default.createElement(
                             'div',
                             { className: 'help-block' },
                             'Username is required'
@@ -27693,6 +27463,21 @@ var RegisterPage = function (_React$Component) {
                             'div',
                             { className: 'help-block' },
                             'Password is required'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group' + (submitted && !user.confirm ? ' has-error' : '') },
+                        _react2.default.createElement(
+                            'label',
+                            { htmlFor: 'confirm' },
+                            'Password'
+                        ),
+                        _react2.default.createElement('input', { type: 'confirm', className: 'form-control', name: 'confirm', value: user.confirm, onChange: this.handleChange }),
+                        submitted && !user.confirm && _react2.default.createElement(
+                            'div',
+                            { className: 'help-block' },
+                            'Confirmation is required'
                         )
                     ),
                     _react2.default.createElement(
@@ -27728,12 +27513,6 @@ function mapStateToProps(state) {
 
 var connectedRegisterPage = (0, _reactRedux.connect)(mapStateToProps)(RegisterPage);
 exports.RegisterPage = connectedRegisterPage;
-
-/***/ }),
-/* 126 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);
