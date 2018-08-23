@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+
+use JWTAuth;
 
 class AuthController extends Controller
 {
@@ -22,19 +25,39 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(AuthRequest $request)
     {
-        $credentials = request(['email', 'password']);
+        // grab credentials from the request
+        $credentials = $request->only('email', 'password');
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        try {
+            // attempt to verify the credentials and create a token for the user
+            if (! $token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'invalid_credentials'], 401);
+            }
+        } catch (JWTException $e) {
+            // something went wrong whilst attempting to encode the token
+            return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        return $this->respondWithToken($token);
+        // all good so return the token
+        return response()->json(compact('token'));
+
+        // $credentials = request(['email', 'password']);
+        //
+        // $token = auth()->attempt($credentials);
+        // error_log('here?, '.print_r($token, 1));
+        // if (! $token) {
+        //     return response()->json(['error' => 'Unauthorized'], 401);
+        // }
+        //
+        // return $this->respondWithToken($token);
+
     }
     public function register(AuthRequest $request)
     {
-        $credentials = $request->only(['email', 'password', 'confirm']);
+        $credentials = $request->validated();
+        // $user = User::
 
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);

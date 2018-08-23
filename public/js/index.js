@@ -26827,11 +26827,11 @@ var userService = exports.userService = {
     delete: _delete
 };
 
-function login(username, password) {
+function login(email, password) {
     var requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username, password: password })
+        body: JSON.stringify({ email: email, password: password })
     };
 
     return fetch('/api/auth/login', requestOptions).then(handleResponse).then(function (user) {
@@ -27199,7 +27199,7 @@ var LoginPage = function (_React$Component) {
         _this.props.dispatch(_actions.userActions.logout());
 
         _this.state = {
-            username: '',
+            email: '',
             password: '',
             submitted: false
         };
@@ -27225,12 +27225,12 @@ var LoginPage = function (_React$Component) {
 
             this.setState({ submitted: true });
             var _state = this.state,
-                username = _state.username,
+                email = _state.email,
                 password = _state.password;
             var dispatch = this.props.dispatch;
 
-            if (username && password) {
-                dispatch(_actions.userActions.login(username, password));
+            if (email && password) {
+                dispatch(_actions.userActions.login(email, password));
             }
         }
     }, {
@@ -27238,7 +27238,7 @@ var LoginPage = function (_React$Component) {
         value: function render() {
             var loggingIn = this.props.loggingIn;
             var _state2 = this.state,
-                username = _state2.username,
+                email = _state2.email,
                 password = _state2.password,
                 submitted = _state2.submitted;
 
@@ -27255,14 +27255,14 @@ var LoginPage = function (_React$Component) {
                     { name: 'form', onSubmit: this.handleSubmit },
                     _react2.default.createElement(
                         'div',
-                        { className: 'form-group' + (submitted && !username ? ' has-error' : '') },
+                        { className: 'form-group' + (submitted && !email ? ' has-error' : '') },
                         _react2.default.createElement(
                             'label',
-                            { htmlFor: 'username' },
-                            'Username'
+                            { htmlFor: 'email' },
+                            'Email'
                         ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'username', value: username, onChange: this.handleChange }),
-                        submitted && !username && _react2.default.createElement(
+                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'email', value: email, onChange: this.handleChange }),
+                        submitted && !email && _react2.default.createElement(
                             'div',
                             { className: 'help-block' },
                             'Username is required'
@@ -27428,7 +27428,7 @@ var RegisterPage = function (_React$Component) {
                             { htmlFor: 'name' },
                             'Email'
                         ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'email', value: user.email, onChange: this.handleChange }),
+                        _react2.default.createElement('input', { type: 'email', className: 'form-control', name: 'email', value: user.email, onChange: this.handleChange }),
                         submitted && !user.email && _react2.default.createElement(
                             'div',
                             { className: 'help-block' },
@@ -27471,7 +27471,7 @@ var RegisterPage = function (_React$Component) {
                         _react2.default.createElement(
                             'label',
                             { htmlFor: 'confirm' },
-                            'Password'
+                            'Confirm Password'
                         ),
                         _react2.default.createElement('input', { type: 'confirm', className: 'form-control', name: 'confirm', value: user.confirm, onChange: this.handleChange }),
                         submitted && !user.confirm && _react2.default.createElement(

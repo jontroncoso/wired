@@ -14,7 +14,7 @@ class AuthRequest extends FormRequest
     public function authorize()
     {
         // anybody can access
-        return false;
+        return true;
     }
 
     /**
@@ -25,13 +25,14 @@ class AuthRequest extends FormRequest
     public function rules()
     {
         $return = [
-            'email'     => 'required|email',
+            'email'     => 'required|email|exists:users,email',
             'password'  => 'required|string',
         ];
-        if(Route::path() == '/register')
+        if(FormRequest::path() == '/register')
         {
-            $return['confirm'] = 'required|same:password';
-            $return['name'] = 'required|string';
+            $return['email']    = 'required|same:password|unique:users,email';
+            $return['confirm']  = 'required|same:password';
+            $return['name']     = 'required|string';
         }
         return $return;
     }
