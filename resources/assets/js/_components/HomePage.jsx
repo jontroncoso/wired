@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { userActions, drinkActions } from '../_actions';
+import { drinkActions, sipActions } from '../_actions';
 
 class HomePage extends React.Component {
 
@@ -12,24 +12,20 @@ class HomePage extends React.Component {
 
     componentDidMount() {
         this.props.dispatch(drinkActions.getAll());
+        this.props.dispatch(sipActions.getAll());
     }
 
     componentWillUnmount() {
 
     }
 
-    handleDeleteUser(id) {
-        return (e) => this.props.dispatch(userActions.delete(id));
-    }
     onMouseOver(drink) {
-        return e =>
-        {
-            console.log('drink ', drink);
-            this.setState({speechBubble: drink.description});
-        }
+        return e => this.setState({speechBubble: drink.description});
     }
-    onMouseOut = (e) => {
-        this.setState({speechBubble: ''});
+    onMouseOut = (e) => this.setState({speechBubble: ''});
+
+    consume(drink) {
+         return e => this.props.dispatch(sipActions.consume(drink));
     }
 
     render() {
@@ -46,7 +42,13 @@ class HomePage extends React.Component {
                                 <h1 className="chalk-fancy">Wired Cafe</h1>
                             </li>
                             {drinks.items.map((drink, index) =>
-                                <li key={drink.id} className="list-group-item" onMouseOver={this.onMouseOver(drink)} onMouseOut={this.onMouseOut}>
+                                <li
+                                    key={drink.id}
+                                    className="list-group-item"
+                                    onMouseOver={this.onMouseOver(drink)}
+                                    onMouseOut={this.onMouseOut}
+                                    onClick={this.consume(drink)}
+                                    >
                                     <button className="btn-link btn btn-lg">{drink.name}</button> <small> - {drink.dosage}mg</small>
                                 </li>
                             )}

@@ -16,4 +16,9 @@ class Sip extends Pivot
     {
         return $this->belongsTo(\App\Model\User::class);
     }
+
+    public function getDosageAttribute()
+    {
+        return $this->drink()->value('dosage');
+    }
 }

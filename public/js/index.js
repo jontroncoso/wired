@@ -190,6 +190,18 @@ Object.keys(_alert).forEach(function (key) {
   });
 });
 
+var _sip = __webpack_require__(132);
+
+Object.keys(_sip).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _sip[key];
+    }
+  });
+});
+
 var _drink = __webpack_require__(89);
 
 Object.keys(_drink).forEach(function (key) {
@@ -330,6 +342,18 @@ Object.keys(_alert).forEach(function (key) {
     enumerable: true,
     get: function get() {
       return _alert[key];
+    }
+  });
+});
+
+var _sip = __webpack_require__(131);
+
+Object.keys(_sip).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _sip[key];
     }
   });
 });
@@ -25734,13 +25758,22 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.authHeader = authHeader;
+
+var _actions = __webpack_require__(6);
+
 function authHeader() {
     // return authorization header with jwt token
     var user = JSON.parse(localStorage.getItem('user'));
 
     if (user && user.token) {
-        return { 'Authorization': 'Bearer ' + user.token };
+        return {
+            'Authorization': 'Bearer ' + user.token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
     } else {
+        _actions.userActions.logout();
+        window.location.href = '/login';
         return {};
     }
 }
@@ -27237,7 +27270,7 @@ var HomePage = function (_React$Component) {
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = HomePage.__proto__ || Object.getPrototypeOf(HomePage)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             speechBubble: ''
         }, _this.onMouseOut = function (e) {
-            _this.setState({ speechBubble: '' });
+            return _this.setState({ speechBubble: '' });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -27245,27 +27278,27 @@ var HomePage = function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.props.dispatch(_actions.drinkActions.getAll());
+            this.props.dispatch(_actions.sipActions.getAll());
         }
     }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {}
     }, {
-        key: 'handleDeleteUser',
-        value: function handleDeleteUser(id) {
+        key: 'onMouseOver',
+        value: function onMouseOver(drink) {
             var _this2 = this;
 
             return function (e) {
-                return _this2.props.dispatch(_actions.userActions.delete(id));
+                return _this2.setState({ speechBubble: drink.description });
             };
         }
     }, {
-        key: 'onMouseOver',
-        value: function onMouseOver(drink) {
+        key: 'consume',
+        value: function consume(drink) {
             var _this3 = this;
 
             return function (e) {
-                console.log('drink ', drink);
-                _this3.setState({ speechBubble: drink.description });
+                return _this3.props.dispatch(_actions.sipActions.consume(drink));
             };
         }
     }, {
@@ -27309,7 +27342,13 @@ var HomePage = function (_React$Component) {
                         drinks.items.map(function (drink, index) {
                             return _react2.default.createElement(
                                 'li',
-                                { key: drink.id, className: 'list-group-item', onMouseOver: _this4.onMouseOver(drink), onMouseOut: _this4.onMouseOut },
+                                {
+                                    key: drink.id,
+                                    className: 'list-group-item',
+                                    onMouseOver: _this4.onMouseOver(drink),
+                                    onMouseOut: _this4.onMouseOut,
+                                    onClick: _this4.consume(drink)
+                                },
                                 _react2.default.createElement(
                                     'button',
                                     { className: 'btn-link btn btn-lg' },
@@ -27732,6 +27771,122 @@ exports.RegisterPage = connectedRegisterPage;
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 127 */,
+/* 128 */,
+/* 129 */,
+/* 130 */,
+/* 131 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.sipActions = undefined;
+
+var _constants = __webpack_require__(3);
+
+var _ = __webpack_require__(6);
+
+var _helpers = __webpack_require__(8);
+
+var sipActions = exports.sipActions = {
+    getAll: getAll,
+    consume: consume
+};
+
+function getAll() {
+    return function (dispatch) {
+        dispatch(request());
+
+        var requestOptions = {
+            method: 'GET',
+            headers: (0, _helpers.authHeader)()
+        };
+
+        return fetch('/api/sips', requestOptions).then(_helpers.handleResponse).then(function (data) {
+            return dispatch(success(data.sips));
+        }, function (error) {
+            return dispatch(failure(error.toString()));
+        });
+    };
+
+    function request() {
+        return { type: _constants.sipConstants.GETALL_REQUEST };
+    }
+    function success(sips) {
+        return { type: _constants.sipConstants.GETALL_SUCCESS, sips: sips };
+    }
+    function failure(error) {
+        return { type: _constants.sipConstants.GETALL_FAILURE, error: error };
+    }
+}
+
+function consume(drink) {
+    return function (dispatch) {
+        dispatch(request());
+
+        var requestOptions = {
+            method: 'POST',
+            headers: (0, _helpers.authHeader)(),
+            body: JSON.stringify({ drink_id: drink.id })
+        };
+
+        return fetch('/api/sips', requestOptions).then(_helpers.handleResponse).then(function (data) {
+            console.log('sipActions.getAll ', sipActions.getAll);
+            dispatch(sipActions.getAll());
+            dispatch(success(data.sip));
+        }, function (error) {
+            return dispatch(failure(error.toString()));
+        });
+    };
+
+    function request() {
+        return { type: _constants.sipConstants.POST_REQUEST };
+    }
+    function success(sip) {
+        return { type: _constants.sipConstants.POST_SUCCESS, sip: sip };
+    }
+    function failure(error) {
+        return { type: _constants.sipConstants.POST_FAILURE, error: error };
+    }
+}
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var sipConstants = exports.sipConstants = {
+    GETALL_REQUEST: 'SIPS_GETALL_REQUEST',
+    GETALL_SUCCESS: 'SIPS_GETALL_SUCCESS',
+    GETALL_FAILURE: 'SIPS_GETALL_FAILURE',
+
+    GET_REQUEST: 'SIPS_GET_REQUEST',
+    GET_SUCCESS: 'SIPS_GET_SUCCESS',
+    GET_FAILURE: 'SIPS_GET_FAILURE',
+
+    PUT_REQUEST: 'SIPS_PUT_REQUEST',
+    PUT_SUCCESS: 'SIPS_PUT_SUCCESS',
+    PUT_FAILURE: 'SIPS_PUT_FAILURE',
+
+    POST_REQUEST: 'SIPS_POST_REQUEST',
+    POST_SUCCESS: 'SIPS_POST_SUCCESS',
+    POST_FAILURE: 'SIPS_POST_FAILURE',
+
+    DELETE_REQUEST: 'SIPS_DELETE_REQUEST',
+    DELETE_SUCCESS: 'SIPS_DELETE_SUCCESS',
+    DELETE_FAILURE: 'SIPS_DELETE_FAILURE'
+};
 
 /***/ })
 /******/ ]);

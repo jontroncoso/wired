@@ -17,7 +17,10 @@ class SipsController extends Controller
     {
         $user = \Auth::user();
         return response()->json([
-            'sips'  => $user->sips()->with('drink')->get(),
+            'sips'  => $user->sips->map(function($sip){
+                $sip->append('dosage');
+                return $sip;
+            }),
             'bcl'   => $user->bcl,
         ]);
     }
@@ -31,7 +34,7 @@ class SipsController extends Controller
     public function store(SipRequest $request)
     {
         return response()->json([
-            'sip' => Sip::create($request->validated() + ['user_id' => \Auth::user()->id])->load('drink')
+            'sip' => Sip::create($request->validated() + ['user_id' => \Auth::user()->id])
         ]);
     }
 
@@ -43,7 +46,7 @@ class SipsController extends Controller
      */
     public function show(Sip $sip)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -55,7 +58,7 @@ class SipsController extends Controller
      */
     public function update(Request $request, Sip $sip)
     {
-        //
+        abort(404);
     }
 
     /**
