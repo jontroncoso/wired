@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { userActions } from '../_actions';
+import { userActions, drinkActions } from '../_actions';
 
 class HomePage extends React.Component {
     componentDidMount() {
-        this.props.dispatch(userActions.getAll());
+        this.props.dispatch(drinkActions.getAll());
     }
 
     handleDeleteUser(id) {
@@ -14,24 +14,20 @@ class HomePage extends React.Component {
     }
 
     render() {
-        const { user, users } = this.props;
+        const { user, users, drinks } = this.props;
         return (
             <div className="col-md-6 col-md-offset-3">
-                <h1>Hi {user.name}!</h1>
-                <p>You're logged in with React!!</p>
-                <h3>All registered users:</h3>
-                {users.loading && <em>Loading users...</em>}
+                {users.loading && <em>Loading drinks...</em>}
                 {users.error && <span className="text-danger">ERROR: {users.error}</span>}
-                {users.items &&
-                    <ul>
-                        {users.items.map((user, index) =>
-                            <li key={user.id}>
-                                {user.name + ' ' + user.lastName}
-                                {
-                                    user.deleting ? <em> - Deleting...</em>
-                                    : user.deleteError ? <span className="text-danger"> - ERROR: {user.deleteError}</span>
-                                    : <span> - <a onClick={this.handleDeleteUser(user.id)}>Delete</a></span>
-                                }
+
+                {drinks.items &&
+                    <ul className="chalkboard chalk list-group">
+                        <li className="list-group-item">
+                            <h1 className="chalk-fancy">Wired Cafe</h1>
+                        </li>
+                        {drinks.items.map((drink, index) =>
+                            <li key={drink.id} className="list-group-item">
+                                <h3>{drink.name} <small> - {drink.dosage}mg</small></h3>
                             </li>
                         )}
                     </ul>
@@ -45,11 +41,12 @@ class HomePage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { users, authentication } = state;
+    const { users, authentication, drinks } = state;
     const { user } = authentication;
     return {
         user,
-        users
+        users,
+        drinks,
     };
 }
 

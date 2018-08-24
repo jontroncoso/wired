@@ -22,17 +22,19 @@ class App extends React.Component {
         return (
             <div className="jumbotron">
                 <div className="container">
-                    <div className="col-sm-8 col-sm-offset-2">
-                        {alert.message &&
-                            <div className={`alert ${alert.type}`}>{alert.message}</div>
-                        }
-                        <Router history={history}>
-                            <div>
-                                <PrivateRoute exact path="/" component={HomePage} />
-                                <Route path="/login" component={LoginPage} />
-                                <Route path="/register" component={RegisterPage} />
-                            </div>
-                        </Router>
+                    <div className="row">
+                        <div className="col">
+                            {alert.message &&
+                                <div className={`alert ${alert.type}`}>{alert.message}</div>
+                            }
+                            <Router history={history}>
+                                <div>
+                                    <PrivateRoute exact path="/" component={HomePage} />
+                                    <Route path="/login" component={LoginPage} />
+                                    <Route path="/register" component={RegisterPage} />
+                                </div>
+                            </Router>
+                        </div>
                     </div>
                 </div>
             </div>

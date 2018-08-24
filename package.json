@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "test": "> ./storage/logs/laravel.log && php artisan migrate:fresh && ./vendor/bin/phpunit",
+        "test": "> ./storage/logs/laravel.log && php artisan migrate:fresh --seeder=DevSeeder && ./vendor/bin/phpunit",
         "test-fast": "> ./storage/logs/laravel.log && ./vendor/bin/phpunit",
         "lint": " ./node_modules/.bin/eslint ./resources/assets/js/",
         "dev": "npm run development",

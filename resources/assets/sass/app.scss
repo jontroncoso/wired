@@ -1,6 +1,6 @@
 
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Nunito|Fredericka+the+Great|Homemade+Apple');
 
 // Variables
 @import 'variables';
@@ -9,6 +9,31 @@
 @import '~bootstrap/scss/bootstrap';
 
 .navbar-laravel {
-  background-color: #fff;
+  background-color: $white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+.chalk
+{
+    font-family: 'Homemade Apple', cursive;
+}
+
+.chalk-fancy {
+    font-family: 'Fredericka the Great', cursive;
+}
+
+.chalkboard {
+    background-color: $gray-dark;
+    color: $white;
+    border: 10px solid $white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+    h1 {
+        font-size: 90px;
+    }
+
+    .list-group-item {
+        border: none 0;
+        background-color: $gray-dark;
+        color: $white;
+    }
 }

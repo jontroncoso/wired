@@ -13,7 +13,7 @@ class LoginPage extends Page
      */
     public function url()
     {
-        return '/';
+        return '/login';
     }
 
     /**
@@ -35,10 +35,12 @@ class LoginPage extends Page
     public function elements()
     {
         return [
-            '@email'        => '#login-email',
-            '@password'     => '#login-password input',
-            '@confirm'      => '#login-confirm input',
-            '@metabolism'   => '#login-metabolism input',
+            '@email'        => 'input[name="email"]',
+            '@password'     => 'input[name="password"]',
+            '@confirm'      => 'input[name="confirm"]',
+            '@metabolism'   => 'input[name="metabolism"]',
+            '@submit'       => 'button.btn-primary.btn',
+            '@error'        => '.alert.alert-danger',
         ];
     }
 }

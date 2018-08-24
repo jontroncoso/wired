@@ -287,6 +287,18 @@ Object.keys(_alert).forEach(function (key) {
   });
 });
 
+var _drink = __webpack_require__(138);
+
+Object.keys(_drink).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _drink[key];
+    }
+  });
+});
+
 var _user = __webpack_require__(89);
 
 Object.keys(_user).forEach(function (key) {
@@ -475,6 +487,18 @@ Object.keys(_alert).forEach(function (key) {
   });
 });
 
+var _drink = __webpack_require__(137);
+
+Object.keys(_drink).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _drink[key];
+    }
+  });
+});
+
 var _user = __webpack_require__(115);
 
 Object.keys(_user).forEach(function (key) {
@@ -530,6 +554,18 @@ Object.keys(_authHeader).forEach(function (key) {
     enumerable: true,
     get: function get() {
       return _authHeader[key];
+    }
+  });
+});
+
+var _handleResponse = __webpack_require__(135);
+
+Object.keys(_handleResponse).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _handleResponse[key];
     }
   });
 });
@@ -25336,6 +25372,8 @@ var _authentication = __webpack_require__(87);
 
 var _registration = __webpack_require__(90);
 
+var _drinks = __webpack_require__(136);
+
 var _users = __webpack_require__(91);
 
 var _alert = __webpack_require__(92);
@@ -25344,6 +25382,7 @@ var rootReducer = (0, _redux.combineReducers)({
     authentication: _authentication.authentication,
     registration: _registration.registration,
     users: _users.users,
+    drinks: _drinks.drinks,
     alert: _alert.alert
 });
 
@@ -25677,21 +25716,25 @@ var App = function (_React$Component) {
                     { className: 'container' },
                     _react2.default.createElement(
                         'div',
-                        { className: 'col-sm-8 col-sm-offset-2' },
-                        alert.message && _react2.default.createElement(
-                            'div',
-                            { className: 'alert ' + alert.type },
-                            alert.message
-                        ),
+                        { className: 'row' },
                         _react2.default.createElement(
-                            _reactRouterDom.Router,
-                            { history: _helpers.history },
-                            _react2.default.createElement(
+                            'div',
+                            { className: 'col' },
+                            alert.message && _react2.default.createElement(
                                 'div',
-                                null,
-                                _react2.default.createElement(_helpers.PrivateRoute, { exact: true, path: '/', component: _components.HomePage }),
-                                _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _components.LoginPage }),
-                                _react2.default.createElement(_reactRouterDom.Route, { path: '/register', component: _components.RegisterPage })
+                                { className: 'alert ' + alert.type },
+                                alert.message
+                            ),
+                            _react2.default.createElement(
+                                _reactRouterDom.Router,
+                                { history: _helpers.history },
+                                _react2.default.createElement(
+                                    'div',
+                                    null,
+                                    _react2.default.createElement(_helpers.PrivateRoute, { exact: true, path: '/', component: _components.HomePage }),
+                                    _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _components.LoginPage }),
+                                    _react2.default.createElement(_reactRouterDom.Route, { path: '/register', component: _components.RegisterPage })
+                                )
                             )
                         )
                     )
@@ -26834,7 +26877,7 @@ function login(email, password) {
         body: JSON.stringify({ email: email, password: password })
     };
 
-    return fetch('/api/auth/login', requestOptions).then(handleResponse).then(function (user) {
+    return fetch('/api/auth/login', requestOptions).then(_helpers.handleResponse).then(function (user) {
         // login successful if there's a jwt token in the response
         if (user.token) {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -26855,7 +26898,7 @@ function getAll() {
         headers: (0, _helpers.authHeader)()
     };
 
-    return fetch('/users', requestOptions).then(handleResponse);
+    return fetch('/users', requestOptions).then(_helpers.handleResponse);
 }
 
 function getById(id) {
@@ -26864,7 +26907,7 @@ function getById(id) {
         headers: (0, _helpers.authHeader)()
     };
 
-    return fetch('/users/' + id, requestOptions).then(handleResponse);
+    return fetch('/users/' + id, requestOptions).then(_helpers.handleResponse);
 }
 
 function register(user) {
@@ -26874,7 +26917,7 @@ function register(user) {
         body: JSON.stringify(user)
     };
 
-    return fetch('/api/auth/register', requestOptions).then(handleResponse);
+    return fetch('/api/auth/register', requestOptions).then(_helpers.handleResponse);
 }
 
 function update(user) {
@@ -26884,7 +26927,7 @@ function update(user) {
         body: JSON.stringify(user)
     };
 
-    return fetch('/users/' + user.id, requestOptions).then(handleResponse);
+    return fetch('/users/' + user.id, requestOptions).then(_helpers.handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
@@ -26894,19 +26937,7 @@ function _delete(id) {
         headers: (0, _helpers.authHeader)()
     };
 
-    return fetch('/users/' + id, requestOptions).then(handleResponse);
-}
-
-function handleResponse(response) {
-    return response.text().then(function (text) {
-        var data = text && JSON.parse(text);
-        if (!response.ok) {
-            var error = data && data.message || response.statusText;
-            return Promise.reject(error);
-        }
-
-        return data;
-    });
+    return fetch('/users/' + id, requestOptions).then(_helpers.handleResponse);
 }
 
 /***/ }),
@@ -27042,7 +27073,7 @@ var HomePage = function (_React$Component) {
     _createClass(HomePage, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.props.dispatch(_actions.userActions.getAll());
+            this.props.dispatch(_actions.drinkActions.getAll());
         }
     }, {
         key: 'handleDeleteUser',
@@ -27056,36 +27087,18 @@ var HomePage = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this3 = this;
-
             var _props = this.props,
                 user = _props.user,
-                users = _props.users;
+                users = _props.users,
+                drinks = _props.drinks;
 
             return _react2.default.createElement(
                 'div',
                 { className: 'col-md-6 col-md-offset-3' },
-                _react2.default.createElement(
-                    'h1',
-                    null,
-                    'Hi ',
-                    user.name,
-                    '!'
-                ),
-                _react2.default.createElement(
-                    'p',
-                    null,
-                    'You\'re logged in with React!!'
-                ),
-                _react2.default.createElement(
-                    'h3',
-                    null,
-                    'All registered users:'
-                ),
                 users.loading && _react2.default.createElement(
                     'em',
                     null,
-                    'Loading users...'
+                    'Loading drinks...'
                 ),
                 users.error && _react2.default.createElement(
                     'span',
@@ -27093,31 +27106,33 @@ var HomePage = function (_React$Component) {
                     'ERROR: ',
                     users.error
                 ),
-                users.items && _react2.default.createElement(
+                drinks.items && _react2.default.createElement(
                     'ul',
-                    null,
-                    users.items.map(function (user, index) {
+                    { className: 'chalkboard chalk list-group' },
+                    _react2.default.createElement(
+                        'li',
+                        { className: 'list-group-item' },
+                        _react2.default.createElement(
+                            'h1',
+                            { className: 'chalk-fancy' },
+                            'Wired Cafe'
+                        )
+                    ),
+                    drinks.items.map(function (drink, index) {
                         return _react2.default.createElement(
                             'li',
-                            { key: user.id },
-                            user.name + ' ' + user.lastName,
-                            user.deleting ? _react2.default.createElement(
-                                'em',
+                            { key: drink.id, className: 'list-group-item' },
+                            _react2.default.createElement(
+                                'h3',
                                 null,
-                                ' - Deleting...'
-                            ) : user.deleteError ? _react2.default.createElement(
-                                'span',
-                                { className: 'text-danger' },
-                                ' - ERROR: ',
-                                user.deleteError
-                            ) : _react2.default.createElement(
-                                'span',
-                                null,
-                                ' - ',
+                                drink.name,
+                                ' ',
                                 _react2.default.createElement(
-                                    'a',
-                                    { onClick: _this3.handleDeleteUser(user.id) },
-                                    'Delete'
+                                    'small',
+                                    null,
+                                    ' - ',
+                                    drink.dosage,
+                                    'mg'
                                 )
                             )
                         );
@@ -27141,12 +27156,14 @@ var HomePage = function (_React$Component) {
 
 function mapStateToProps(state) {
     var users = state.users,
-        authentication = state.authentication;
+        authentication = state.authentication,
+        drinks = state.drinks;
     var user = authentication.user;
 
     return {
         user: user,
-        users: users
+        users: users,
+        drinks: drinks
     };
 }
 
@@ -27513,6 +27530,176 @@ function mapStateToProps(state) {
 
 var connectedRegisterPage = (0, _reactRedux.connect)(mapStateToProps)(RegisterPage);
 exports.RegisterPage = connectedRegisterPage;
+
+/***/ }),
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.handleResponse = handleResponse;
+function handleResponse(response) {
+    return response.text().then(function (text) {
+        var data = text && JSON.parse(text);
+        if (!response.ok) {
+            var error = data && data.message || response.statusText;
+            return Promise.reject(error);
+        }
+
+        return data;
+    });
+}
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.drinks = drinks;
+
+var _constants = __webpack_require__(5);
+
+function drinks() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _constants.drinkConstants.GETALL_REQUEST:
+            return {
+                loading: true
+            };
+        case _constants.drinkConstants.GETALL_SUCCESS:
+            return {
+                items: action.drinks
+            };
+        case _constants.drinkConstants.GETALL_FAILURE:
+            return {
+                error: action.error
+            };
+        case _constants.drinkConstants.DELETE_REQUEST:
+            // add 'deleting:true' property to user being deleted
+            return Object.assign({}, state, {
+                items: state.items.map(function (user) {
+                    return user.id === action.id ? Object.assign({}, user, { deleting: true }) : user;
+                })
+            });
+        case _constants.drinkConstants.DELETE_SUCCESS:
+            // remove deleted user from state
+            return {
+                items: state.items.filter(function (user) {
+                    return user.id !== action.id;
+                })
+            };
+        case _constants.drinkConstants.DELETE_FAILURE:
+            // remove 'deleting:true' property and add 'deleteError:[error]' property to user
+            return Object.asign({}, state, { items: state.items.map(function (user) {
+                    if (user.id === action.id) {
+                        // make copy of user without 'deleting:true' property
+                        var userCopy = Object.assign({}, user);
+                        delete userCopy.deleting;
+                        // return copy of user with 'deleteError:[error]' property
+                        return Object.assign({}, userCopy, { deleteError: action.error });
+                    }
+
+                    return user;
+                })
+            });
+        default:
+            return state;
+    }
+}
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.drinkActions = undefined;
+
+var _constants = __webpack_require__(5);
+
+var _services = __webpack_require__(116);
+
+var _ = __webpack_require__(9);
+
+var _helpers = __webpack_require__(10);
+
+var drinkActions = exports.drinkActions = {
+    getAll: getAll
+};
+
+function getAll() {
+    return function (dispatch) {
+        dispatch(request());
+
+        var requestOptions = {
+            method: 'GET',
+            headers: (0, _helpers.authHeader)()
+        };
+
+        return fetch('/api/drinks', requestOptions).then(_helpers.handleResponse).then(function (data) {
+            return dispatch(success(data.drinks));
+        }, function (error) {
+            return dispatch(failure(error.toString()));
+        });
+    };
+
+    function request() {
+        return { type: _constants.drinkConstants.GETALL_REQUEST };
+    }
+    function success(drinks) {
+        return { type: _constants.drinkConstants.GETALL_SUCCESS, drinks: drinks };
+    }
+    function failure(error) {
+        return { type: _constants.drinkConstants.GETALL_FAILURE, error: error };
+    }
+}
+
+/***/ }),
+/* 138 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var drinkConstants = exports.drinkConstants = {
+    GETALL_REQUEST: 'DRINKS_GETALL_REQUEST',
+    GETALL_SUCCESS: 'DRINKS_GETALL_SUCCESS',
+    GETALL_FAILURE: 'DRINKS_GETALL_FAILURE',
+
+    GET_REQUEST: 'DRINKS_GET_REQUEST',
+    GET_SUCCESS: 'DRINKS_GET_SUCCESS',
+    GET_FAILURE: 'DRINKS_GET_FAILURE',
+
+    PUT_REQUEST: 'DRINKS_PUT_REQUEST',
+    PUT_SUCCESS: 'DRINKS_PUT_SUCCESS',
+    PUT_FAILURE: 'DRINKS_PUT_FAILURE',
+
+    POST_REQUEST: 'DRINKS_POST_REQUEST',
+    POST_SUCCESS: 'DRINKS_POST_SUCCESS',
+    POST_FAILURE: 'DRINKS_POST_FAILURE',
+
+    DELETE_REQUEST: 'DRINKS_DELETE_REQUEST',
+    DELETE_SUCCESS: 'DRINKS_DELETE_SUCCESS',
+    DELETE_FAILURE: 'DRINKS_DELETE_FAILURE'
+};
 
 /***/ })
 /******/ ]);

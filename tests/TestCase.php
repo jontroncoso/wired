@@ -1,13 +1,20 @@
 <?php
 namespace Tests;
 
-use App\User;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
+
+use App\Model\User;
+
+
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    use DatabaseTransactions;
     /**
      * @var User
      */

@@ -40,18 +40,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        // all good so return the token
-        return response()->json(compact('token'));
-
-        // $credentials = request(['email', 'password']);
-        //
-        // $token = auth()->attempt($credentials);
-        // error_log('here?, '.print_r($token, 1));
-        // if (! $token) {
-        //     return response()->json(['error' => 'Unauthorized'], 401);
-        // }
-        //
-        // return $this->respondWithToken($token);
+        return $this->respondWithToken($token);
 
     }
     public function register(AuthRequest $request)
@@ -108,7 +97,7 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => 60 * 60
         ]);
