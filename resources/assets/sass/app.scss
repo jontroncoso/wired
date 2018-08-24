@@ -12,28 +12,71 @@
   background-color: $white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
-.chalk
-{
-    font-family: 'Homemade Apple', cursive;
-}
+// homepage
+.store-front {
+    position: relative;
 
-.chalk-fancy {
-    font-family: 'Fredericka the Great', cursive;
-}
-
-.chalkboard {
-    background-color: $gray-dark;
-    color: $white;
-    border: 10px solid $white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-
-    h1 {
-        font-size: 90px;
+    .chalk
+    {
+        font-family: 'Homemade Apple', cursive;
     }
 
-    .list-group-item {
-        border: none 0;
+    .chalk-fancy {
+        font-family: 'Fredericka the Great', cursive;
+    }
+
+    .chalkboard {
         background-color: $gray-dark;
         color: $white;
+        border: 10px solid $white;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+        h1 {
+            font-size: 90px;
+        }
+
+        .list-group-item {
+            font-size: 2em;
+            color: $white;
+            text-decoration: none;
+        }
+
+        .list-group-item {
+            border: none 0;
+            background-color: $gray-dark;
+            color: $white;
+        }
+    }
+
+    .dude {
+        position: relative;
+
+        .speech-bubble {
+            position: absolute;
+            bottom: 80%;
+            right: 20vw;
+            width: 40vw;
+            background-color: $white;
+            box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px ;
+            padding: 1.5em 1em;
+            border-radius: 0.5em;
+
+            &:after {
+                content: "";
+                position: absolute;
+                box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px ;
+                -moz-transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+                bottom: -10px;
+                right: 50px;
+                border-width: 10px;
+                border-style: solid;
+                border-color: transparent $white $white transparent;
+            }
+        }
+        span {
+            font-size: 30vw;
+        }
     }
 }
+.in-front { z-index: 2 }

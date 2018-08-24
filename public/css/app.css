@@ -10477,15 +10477,19 @@ a.text-dark:focus {
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
-.chalk {
+.store-front {
+  position: relative;
+}
+
+.store-front .chalk {
   font-family: 'Homemade Apple', cursive;
 }
 
-.chalk-fancy {
+.store-front .chalk-fancy {
   font-family: 'Fredericka the Great', cursive;
 }
 
-.chalkboard {
+.store-front .chalkboard {
   background-color: #333333;
   color: #FFFFFF;
   border: 10px solid #FFFFFF;
@@ -10493,13 +10497,57 @@ a.text-dark:focus {
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.chalkboard h1 {
+.store-front .chalkboard h1 {
   font-size: 90px;
 }
 
-.chalkboard .list-group-item {
+.store-front .chalkboard .list-group-item {
+  font-size: 2em;
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+.store-front .chalkboard .list-group-item {
   border: none 0;
   background-color: #333333;
   color: #FFFFFF;
+}
+
+.store-front .dude {
+  position: relative;
+}
+
+.store-front .dude .speech-bubble {
+  position: absolute;
+  bottom: 80%;
+  right: 20vw;
+  width: 40vw;
+  background-color: #FFFFFF;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px;
+          box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px;
+  padding: 1.5em 1em;
+  border-radius: 0.5em;
+}
+
+.store-front .dude .speech-bubble:after {
+  content: "";
+  position: absolute;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px;
+          box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 2px;
+  -moz-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  bottom: -10px;
+  right: 50px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent #FFFFFF #FFFFFF transparent;
+}
+
+.store-front .dude span {
+  font-size: 30vw;
+}
+
+.in-front {
+  z-index: 2;
 }
 
