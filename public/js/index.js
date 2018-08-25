@@ -448,6 +448,18 @@ Object.keys(_authHeader).forEach(function (key) {
   });
 });
 
+var _calculations = __webpack_require__(135);
+
+Object.keys(_calculations).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _calculations[key];
+    }
+  });
+});
+
 var _handleResponse = __webpack_require__(96);
 
 Object.keys(_handleResponse).forEach(function (key) {
@@ -25420,6 +25432,8 @@ var _registration = __webpack_require__(91);
 
 var _drinks = __webpack_require__(92);
 
+var _sips = __webpack_require__(133);
+
 var _users = __webpack_require__(93);
 
 var _alert = __webpack_require__(94);
@@ -25429,6 +25443,7 @@ var rootReducer = (0, _redux.combineReducers)({
     registration: _registration.registration,
     users: _users.users,
     drinks: _drinks.drinks,
+    sips: _sips.sips,
     alert: _alert.alert
 });
 
@@ -27245,6 +27260,8 @@ var _reactRedux = __webpack_require__(7);
 
 var _actions = __webpack_require__(6);
 
+var _helpers = __webpack_require__(8);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27268,9 +27285,30 @@ var HomePage = function (_React$Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = HomePage.__proto__ || Object.getPrototypeOf(HomePage)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            speechBubble: ''
+            speechBubble: '',
+            amount: 0
+        }, _this.tick = function () {
+            var unix_now = Math.round(new Date().getTime() / 1000);
+            var amount = _this.props.sips.items.map(function (sip) {
+                return (0, _helpers.halfLife)({ sip: sip, unix_now: unix_now });
+            }).reduce(function (a, b) {
+                return a + b;
+            }, 0);
+
+            _this.setState({
+                amount: amount,
+                health: (0, _helpers.healthPercentage)({ amount: amount })
+            });
+        }, _this.onMouseOver = function (drink) {
+            return function (e) {
+                return _this.setState({ speechBubble: drink.description });
+            };
         }, _this.onMouseOut = function (e) {
             return _this.setState({ speechBubble: '' });
+        }, _this.consume = function (drink) {
+            return function (e) {
+                return _this.props.dispatch(_actions.sipActions.consume(drink));
+            };
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -27279,32 +27317,17 @@ var HomePage = function (_React$Component) {
         value: function componentDidMount() {
             this.props.dispatch(_actions.drinkActions.getAll());
             this.props.dispatch(_actions.sipActions.getAll());
+            this.setState({ timer: setInterval(this.tick, 100) });
         }
     }, {
         key: 'componentWillUnmount',
-        value: function componentWillUnmount() {}
-    }, {
-        key: 'onMouseOver',
-        value: function onMouseOver(drink) {
-            var _this2 = this;
-
-            return function (e) {
-                return _this2.setState({ speechBubble: drink.description });
-            };
-        }
-    }, {
-        key: 'consume',
-        value: function consume(drink) {
-            var _this3 = this;
-
-            return function (e) {
-                return _this3.props.dispatch(_actions.sipActions.consume(drink));
-            };
+        value: function componentWillUnmount() {
+            this.clearInterval(this.state.timer);
         }
     }, {
         key: 'render',
         value: function render() {
-            var _this4 = this;
+            var _this2 = this;
 
             var _props = this.props,
                 user = _props.user,
@@ -27345,9 +27368,9 @@ var HomePage = function (_React$Component) {
                                 {
                                     key: drink.id,
                                     className: 'list-group-item',
-                                    onMouseOver: _this4.onMouseOver(drink),
-                                    onMouseOut: _this4.onMouseOut,
-                                    onClick: _this4.consume(drink)
+                                    onMouseOver: _this2.onMouseOver(drink),
+                                    onMouseOut: _this2.onMouseOut,
+                                    onClick: _this2.consume(drink)
                                 },
                                 _react2.default.createElement(
                                     'button',
@@ -27383,6 +27406,16 @@ var HomePage = function (_React$Component) {
                             this.state.speechBubble
                         )
                     )
+                ),
+                _react2.default.createElement(
+                    'pre',
+                    { className: 'col' },
+                    this.state.amount
+                ),
+                _react2.default.createElement(
+                    'pre',
+                    { className: 'col' },
+                    this.state.health
                 )
             );
         }
@@ -27393,12 +27426,14 @@ var HomePage = function (_React$Component) {
 
 function mapStateToProps(state) {
     var authentication = state.authentication,
-        drinks = state.drinks;
+        drinks = state.drinks,
+        sips = state.sips;
     var user = authentication.user;
 
     return {
         user: user,
-        drinks: drinks
+        drinks: drinks,
+        sips: sips
     };
 }
 
@@ -27887,6 +27922,82 @@ var sipConstants = exports.sipConstants = {
     DELETE_SUCCESS: 'SIPS_DELETE_SUCCESS',
     DELETE_FAILURE: 'SIPS_DELETE_FAILURE'
 };
+
+/***/ }),
+/* 133 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.sips = sips;
+
+var _constants = __webpack_require__(3);
+
+function sips() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _constants.sipConstants.GETALL_REQUEST:
+            return {
+                loading: true
+            };
+        case _constants.sipConstants.GETALL_SUCCESS:
+            return {
+                items: action.sips
+            };
+        case _constants.sipConstants.GETALL_FAILURE:
+            return {
+                error: action.error
+            };
+        default:
+            return state;
+    }
+}
+
+/***/ }),
+/* 134 */,
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.halfLife = halfLife;
+exports.healthPercentage = healthPercentage;
+function halfLife(_ref) {
+    var sip = _ref.sip,
+        _ref$unix_now = _ref.unix_now,
+        unix_now = _ref$unix_now === undefined ? 0 : _ref$unix_now,
+        _ref$metabolism = _ref.metabolism,
+        metabolism = _ref$metabolism === undefined ? 10 : _ref$metabolism;
+
+    var unixNow = !unix_now ? Math.round(new Date().getTime() / 1000) : unix_now;
+    // return parseInt(Math.exp(-(1/metabolism*parseInt(unixNow-sip.created_at)) + Math.log(sip.dosage)));
+    // console.log('sip.dosage ', sip.dosage);
+    // console.log('metabolism ', metabolism);
+    // console.log('unixNow ', unixNow);
+    // console.log('sip.created_at ', sip.created_at);
+    // console.log('sip.dosage/Math.pow(2,metabolism/parseInt(unixNow-sip.created_at)) ', sip.dosage/Math.pow(2,parseInt(unixNow-sip.created_at)/metabolism));
+    var amount = sip.dosage / Math.pow(2, parseInt(unixNow - sip.created_at) / metabolism);
+    return amount > 1 ? amount : 0;
+}
+
+// LD50 of caffeine is 175mg/kg-body-weight * 90 kg avg 200lb
+function healthPercentage(_ref2) {
+    var amount = _ref2.amount,
+        _ref2$ld = _ref2.ld50,
+        ld50 = _ref2$ld === undefined ? 15750 : _ref2$ld;
+
+    return amount * 100 / (ld50 * 100) / 10000;
+}
 
 /***/ })
 /******/ ]);

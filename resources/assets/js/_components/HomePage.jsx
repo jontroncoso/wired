@@ -4,29 +4,41 @@ import { connect } from 'react-redux';
 
 import { drinkActions, sipActions } from '../_actions';
 
+import { timer, halfLife, healthPercentage } from '../_helpers';
+
 class HomePage extends React.Component {
 
     state = {
         speechBubble: '',
+        amount: 0,
     }
 
     componentDidMount() {
         this.props.dispatch(drinkActions.getAll());
         this.props.dispatch(sipActions.getAll());
+        this.setState({timer: setInterval(this.tick, 100)});
+    }
+
+    tick = () => {
+        const unix_now = Math.round((new Date()).getTime() / 1000);
+        const amount = this.props.sips.items
+            .map(sip => halfLife({sip, unix_now}))
+            .reduce((a, b) => a + b, 0);
+
+        this.setState({
+            amount,
+            health: healthPercentage({amount})
+        });
     }
 
     componentWillUnmount() {
-
+        this.clearInterval(this.state.timer);
     }
 
-    onMouseOver(drink) {
-        return e => this.setState({speechBubble: drink.description});
-    }
-    onMouseOut = (e) => this.setState({speechBubble: ''});
+    onMouseOver = drink => e => this.setState({speechBubble: drink.description});
+    onMouseOut = e => this.setState({speechBubble: ''});
 
-    consume(drink) {
-         return e => this.props.dispatch(sipActions.consume(drink));
-    }
+    consume = drink => e => this.props.dispatch(sipActions.consume(drink));
 
     render() {
         const { user, drinks } = this.props;
@@ -62,6 +74,8 @@ class HomePage extends React.Component {
 
                     </div>
                 </div>
+                <pre className="col">{this.state.amount}</pre>
+                <pre className="col">{this.state.health}</pre>
             </div>
 
         );
@@ -69,11 +83,12 @@ class HomePage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { authentication, drinks } = state;
+    const { authentication, drinks, sips } = state;
     const { user } = authentication;
     return {
         user,
         drinks,
+        sips,
     };
 }
 

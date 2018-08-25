@@ -47,7 +47,7 @@ class User extends Authenticatable implements JWTSubject
             ->with('drink')
             ->get()
             ->map(function($sip) use ($metabolism) {
-                $time = intval(time()-$sip->created_at->timestamp);
+                $time = intval(time()-$sip->created_at);
                 // return $sip->drink->dosage*(1/pow($metabolism, $time));
                 return intval(exp(-(1/$metabolism*$time) + log($sip->drink->dosage)));
             })
