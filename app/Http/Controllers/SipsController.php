@@ -17,7 +17,7 @@ class SipsController extends Controller
     {
         $user = \Auth::user();
         return response()->json([
-            'sips'  => $user->sips->map(function($sip){
+            'sips'  => $user->sips()->get()->map(function($sip){
                 $sip->append('dosage');
                 return $sip;
             }),
@@ -36,39 +36,5 @@ class SipsController extends Controller
         return response()->json([
             'sip' => Sip::create($request->validated() + ['user_id' => \Auth::user()->id])
         ]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Model\Sip  $sip
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Sip $sip)
-    {
-        abort(404);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Model\Sip  $sip
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Sip $sip)
-    {
-        abort(404);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Model\Sip  $sip
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Sip $sip)
-    {
-        abort(404);
     }
 }

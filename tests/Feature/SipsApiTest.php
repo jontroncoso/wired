@@ -32,7 +32,7 @@ class SipsApiTest extends TestCase
 
         $this->json('GET', '/api/sips/')
             ->assertStatus(200)
-            ->assertSee($drink->fresh())
+            ->assertJsonFragment(['drink_id'  => $drink->id])
             ->assertJsonMissing(['bcl' => 0]);
     }
 
@@ -48,11 +48,11 @@ class SipsApiTest extends TestCase
             ->assertSee('drink_id');
 
         $this->json('POST', '/api/sips/', ['drink_id' => $drink->id])->assertStatus(200)
-            ->assertSee($drink);
+            ->assertJsonFragment(['drink_id'  => $drink->id]);
 
         $this->json('GET', '/api/sips/')
             ->assertStatus(200)
-            ->assertSee($drink)
+            ->assertJsonFragment(['drink_id'  => $drink->id])
             ->assertJsonMissing(['bcl' => 0]);
     }
 }
