@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { drinkActions, sipActions } from '../_actions';
 
-import { timer, halfLife, healthPercentage } from '../_helpers';
+import { timer, halfLife, healthPercentage, displayFace } from '../_helpers';
 
 class HomePage extends React.Component {
 
@@ -20,14 +20,16 @@ class HomePage extends React.Component {
     }
 
     tick = () => {
-        const unix_now = Math.round((new Date()).getTime() / 1000);
+        const unix_now = Math.round((new Date()).getTime());
         const amount = this.props.sips.items
             .map(sip => halfLife({sip, unix_now}))
             .reduce((a, b) => a + b, 0);
+        const health = healthPercentage({amount});
 
         this.setState({
             amount,
-            health: healthPercentage({amount})
+            health,
+            face: displayFace({health}),
         });
     }
 
@@ -69,8 +71,12 @@ class HomePage extends React.Component {
                 </div>
                 <div className="col-md-6 in-front">
                     <div className="dude text-md-center text-right">
-                        <span>&#128563;</span>
-                            {this.state.speechBubble && <div className="speech-bubble">{this.state.speechBubble}</div>}
+                        <span>{Math.ceil(this.state.health/20)}</span>
+                        <div className="face" dangerouslySetInnerHTML={{__html: this.state.face}}></div>
+                        {this.state.speechBubble && <div className="speech-bubble">{this.state.speechBubble}</div>}
+                        <div class="health-bar">
+                            <div class="progress" style={{width: this.state.health + '%'}}></div>
+                        </div>
 
                     </div>
                 </div>

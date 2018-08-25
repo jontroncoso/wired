@@ -15,6 +15,11 @@ class DrinksTableSeeder extends Seeder
     {
         Drink::insert([
             [
+                'name'          => 'Earl Grey, Hot',
+                'description'   => 'English classic... served hot',
+                'dosage'        => 30,
+            ],
+            [
                 'name'          => 'Monster Ultra Sunrise',
                 'description'   =>'A refreshing orange beverage that has 75mg of caffeine per serving. Every can has two servings.',
                 'dosage'        => 75,
