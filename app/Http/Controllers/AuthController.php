@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthRequest;
 use Illuminate\Support\Facades\Auth;
+
+use App\Http\Requests\AuthRequest;
 use App\Http\Controllers\Controller;
+use App\Model\User;
 
 use JWTAuth;
 
@@ -17,7 +19,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -45,10 +47,10 @@ class AuthController extends Controller
     }
     public function register(AuthRequest $request)
     {
-        $credentials = $request->validated();
-        // $user = User::
-
-        if (! $token = auth()->attempt($credentials)) {
+        $userData = $request->validated();
+        $userData['password'] = bcrypt($userData['password']);
+        $user = User::create($userData);
+        if (! $token = JWTAuth::attempt($request->only(['email', 'password']))) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

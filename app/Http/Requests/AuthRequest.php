@@ -28,11 +28,14 @@ class AuthRequest extends FormRequest
             'email'     => 'required|email|exists:users,email',
             'password'  => 'required|string',
         ];
-        if(FormRequest::path() == '/register')
+        \Log::info('FormRequest::path()');
+        \Log::info(FormRequest::path());
+        if(FormRequest::path() == 'api/auth/register')
         {
-            $return['email']    = 'required|same:password|unique:users,email';
-            $return['confirm']  = 'required|same:password';
-            $return['name']     = 'required|string';
+            $return['email']        = 'required|email|unique:users,email';
+            $return['confirm']      = 'required|same:password';
+            $return['name']         = 'required|string';
+            $return['metabolism']   = 'required|integer';
         }
         return $return;
     }

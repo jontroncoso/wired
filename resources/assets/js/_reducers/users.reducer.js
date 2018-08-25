@@ -26,6 +26,9 @@ export function users(state = {}, action) {
                 )
             }
         );
+    case userConstants.LOGOUT:
+        // add 'deleting:true' property to user being deleted
+        return {}
     case userConstants.DELETE_SUCCESS:
         // remove deleted user from state
         return {

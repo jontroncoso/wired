@@ -24,7 +24,7 @@ class HomePage extends Page
      */
     public function assert(Browser $browser)
     {
-        //
+        $browser->assertPathIs($this->url());
     }
 
     /**
@@ -35,7 +35,9 @@ class HomePage extends Page
     public function elements()
     {
         return [
-            '@drinks' => '#drinks-container',
+            '@chalkboard'   => '.chalkboard',
+            '@lastDrink'    => 'li:last-child button',
+            '@speechBubble' => '.speech-bubble',
         ];
     }
 }

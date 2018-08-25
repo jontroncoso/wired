@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { drinkActions, sipActions } from '../_actions';
+import { drinkActions, sipActions, userActions } from '../_actions';
 
 import { timer, halfLife, healthPercentage, displayFace } from '../_helpers';
 
@@ -42,10 +42,17 @@ class HomePage extends React.Component {
 
     consume = drink => e => this.props.dispatch(sipActions.consume(drink));
 
+    logout = e =>
+    {
+        this.props.dispatch(userActions.logout());
+        window.location.href = '/';
+    }
+
     render() {
         const { user, drinks } = this.props;
         return (
             <div className="row store-front">
+                <div className="col-12"><button onClick={this.logout} className="btn btn-primary">Log Out</button></div>
                 <div className="col-md-6">
                     {drinks.loading && <em>Loading drinks...</em>}
                     {drinks.error && <span className="text-danger">ERROR: {drinks.error}</span>}
@@ -71,11 +78,10 @@ class HomePage extends React.Component {
                 </div>
                 <div className="col-md-6 in-front">
                     <div className="dude text-md-center text-right">
-                        <span>{Math.ceil(this.state.health/20)}</span>
                         <div className="face" dangerouslySetInnerHTML={{__html: this.state.face}}></div>
                         {this.state.speechBubble && <div className="speech-bubble">{this.state.speechBubble}</div>}
-                        <div class="health-bar">
-                            <div class="progress" style={{width: this.state.health + '%'}}></div>
+                        <div className="health-bar">
+                            <div className="progress" style={{width: this.state.health + '%'}}></div>
                         </div>
 
                     </div>

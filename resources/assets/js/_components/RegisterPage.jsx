@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import { userActions } from '../_actions';
 
+import { secondsToHms } from '../_helpers';
+
 class RegisterPage extends React.Component {
     constructor(props) {
         super(props);
@@ -14,6 +16,7 @@ class RegisterPage extends React.Component {
                 name: '',
                 password: '',
                 confirm: '',
+                metabolism: 18000,
             },
             submitted: false
         };
@@ -60,7 +63,7 @@ class RegisterPage extends React.Component {
                     </div>
                     <div className={'form-group' + (submitted && !user.name ? ' has-error' : '')}>
                         <label htmlFor="name">Username</label>
-                        <input type="text" className="form-control" name="name" value={user.name} onChange={this.handleChange} />
+                        <input type="text" className="form-control" name="name" id="register-name" value={user.name} onChange={this.handleChange} />
                         {submitted && !user.name &&
                             <div className="help-block">Username is required</div>
                         }
@@ -74,10 +77,16 @@ class RegisterPage extends React.Component {
                     </div>
                     <div className={'form-group' + (submitted && !user.confirm ? ' has-error' : '')}>
                         <label htmlFor="confirm">Confirm Password</label>
-                        <input type="confirm" className="form-control" name="confirm" value={user.confirm} onChange={this.handleChange} />
+                        <input type="password" className="form-control" name="confirm" value={user.confirm} onChange={this.handleChange} />
                         {submitted && !user.confirm &&
                             <div className="help-block">Confirmation is required</div>
                         }
+                    </div>
+                    <div className={'form-group' + (submitted && !user.metabolism ? ' has-error' : '')}>
+                        <label htmlFor="metabolism">Metabolism (half-life seconds, typically 5 hours for humans)</label>
+                        <input type="metabolism" className="form-control" name="metabolism" value={user.metabolism} onChange={this.handleChange} />
+                        <div className="help-block">{secondsToHms(user.metabolism)}</div>
+
                     </div>
                     <div className="form-group">
                         <button className="btn btn-primary">Register</button>

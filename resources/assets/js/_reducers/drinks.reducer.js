@@ -1,6 +1,6 @@
 import { drinkConstants } from '../_constants';
 
-export function drinks(state = {}, action) {
+export function drinks(state = {items: []}, action) {
     switch (action.type) {
     case drinkConstants.GETALL_REQUEST:
         return {

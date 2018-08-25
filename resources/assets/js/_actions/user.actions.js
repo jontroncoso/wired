@@ -17,7 +17,7 @@ function login(username, password) {
 
         userService.login(username, password)
             .then(
-                user => { 
+                user => {
                     dispatch(success(user));
                     history.push('/');
                 },
@@ -34,8 +34,12 @@ function login(username, password) {
 }
 
 function logout() {
-    userService.logout();
-    return { type: userConstants.LOGOUT };
+    return dispatch => {
+        userService.logout();
+        dispatch({ type: userConstants.LOGOUT });
+        // window.location.href = '/';
+    };
+
 }
 
 function register(user) {
@@ -44,9 +48,9 @@ function register(user) {
 
         userService.register(user)
             .then(
-                user => { 
+                user => {
                     dispatch(success());
-                    history.push('/login');
+                    history.push('/');
                     dispatch(alertActions.success('Registration successful'));
                 },
                 error => {
@@ -57,7 +61,7 @@ function register(user) {
     };
 
     function request(user) { return { type: userConstants.REGISTER_REQUEST, user } }
-    function success(user) { return { type: userConstants.REGISTER_SUCCESS, user } }
+    function success(user) { return { type: userConstants.LOGIN_SUCCESS, user } }
     function failure(error) { return { type: userConstants.REGISTER_FAILURE, error } }
 }
 

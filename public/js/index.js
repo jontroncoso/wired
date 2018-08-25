@@ -290,75 +290,6 @@ Object.keys(_user).forEach(function (key) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-
-/**
- * Similar to invariant but only logs a warning if the condition is not met.
- * This can be used to log issues in development environments in critical
- * paths. Removing the logging code for production environments will keep the
- * same logic and follow the same code paths.
- */
-
-var __DEV__ = "development" !== 'production';
-
-var warning = function() {};
-
-if (__DEV__) {
-  var printWarning = function printWarning(format, args) {
-    var len = arguments.length;
-    args = new Array(len > 2 ? len - 2 : 0);
-    for (var key = 2; key < len; key++) {
-      args[key - 2] = arguments[key];
-    }
-    var argIndex = 0;
-    var message = 'Warning: ' +
-      format.replace(/%s/g, function() {
-        return args[argIndex++];
-      });
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  }
-
-  warning = function(condition, format, args) {
-    var len = arguments.length;
-    args = new Array(len > 2 ? len - 2 : 0);
-    for (var key = 2; key < len; key++) {
-      args[key - 2] = arguments[key];
-    }
-    if (format === undefined) {
-      throw new Error(
-          '`warning(condition, format, ...args)` requires a warning ' +
-          'message argument'
-      );
-    }
-    if (!condition) {
-      printWarning.apply(null, [format].concat(args));
-    }
-  };
-}
-
-module.exports = warning;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
@@ -436,6 +367,75 @@ Object.keys(_PrivateRoute).forEach(function (key) {
     }
   });
 });
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+
+/**
+ * Similar to invariant but only logs a warning if the condition is not met.
+ * This can be used to log issues in development environments in critical
+ * paths. Removing the logging code for production environments will keep the
+ * same logic and follow the same code paths.
+ */
+
+var __DEV__ = "development" !== 'production';
+
+var warning = function() {};
+
+if (__DEV__) {
+  var printWarning = function printWarning(format, args) {
+    var len = arguments.length;
+    args = new Array(len > 2 ? len - 2 : 0);
+    for (var key = 2; key < len; key++) {
+      args[key - 2] = arguments[key];
+    }
+    var argIndex = 0;
+    var message = 'Warning: ' +
+      format.replace(/%s/g, function() {
+        return args[argIndex++];
+      });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  }
+
+  warning = function(condition, format, args) {
+    var len = arguments.length;
+    args = new Array(len > 2 ? len - 2 : 0);
+    for (var key = 2; key < len; key++) {
+      args[key - 2] = arguments[key];
+    }
+    if (format === undefined) {
+      throw new Error(
+          '`warning(condition, format, ...args)` requires a warning ' +
+          'message argument'
+      );
+    }
+    if (!condition) {
+      printWarning.apply(null, [format].concat(args));
+    }
+  };
+}
+
+module.exports = warning;
+
 
 /***/ }),
 /* 7 */
@@ -1757,7 +1757,7 @@ var createTransitionManager = function createTransitionManager() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_invariant__);
@@ -2853,7 +2853,7 @@ Link.contextTypes = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_invariant__);
@@ -3502,7 +3502,7 @@ var _reactDom = __webpack_require__(43);
 
 var _reactRedux = __webpack_require__(8);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 var _App = __webpack_require__(124);
 
@@ -25376,7 +25376,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var loggerMiddleware = (0, _reduxLogger.createLogger)();
 
-var store = exports.store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default, loggerMiddleware));
+var composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || _redux.compose; //
+
+var store = exports.store = (0, _redux.createStore)(_reducers2.default, composeEnhancers((0, _redux.applyMiddleware)(_reduxThunk2.default, loggerMiddleware)));
 
 /***/ }),
 /* 84 */
@@ -25645,7 +25647,7 @@ exports.drinks = drinks;
 var _constants = __webpack_require__(3);
 
 function drinks() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { items: [] };
     var action = arguments[1];
 
     switch (action.type) {
@@ -25709,7 +25711,7 @@ exports.sips = sips;
 var _constants = __webpack_require__(3);
 
 function sips() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { items: [] };
     var action = arguments[1];
 
     switch (action.type) {
@@ -25768,6 +25770,9 @@ function users() {
                     return user.id === action.id ? Object.assign({}, user, { deleting: true }) : user;
                 })
             });
+        case _constants.userConstants.LOGOUT:
+            // add 'deleting:true' property to user being deleted
+            return {};
         case _constants.userConstants.DELETE_SUCCESS:
             // remove deleted user from state
             return {
@@ -25909,7 +25914,7 @@ var _constants = __webpack_require__(3);
 
 var _ = __webpack_require__(4);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 var sipActions = exports.sipActions = {
     getAll: getAll,
@@ -25991,7 +25996,7 @@ var _services = __webpack_require__(34);
 
 var _ = __webpack_require__(4);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 var drinkActions = exports.drinkActions = {
     getAll: getAll
@@ -26036,7 +26041,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.userService = undefined;
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 var userService = exports.userService = {
     login: login,
@@ -26055,14 +26060,7 @@ function login(email, password) {
         body: JSON.stringify({ email: email, password: password })
     };
 
-    return fetch('/api/auth/login', requestOptions).then(_helpers.handleResponse).then(function (user) {
-        // login successful if there's a jwt token in the response
-        if (user.token) {
-            // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem('user', JSON.stringify(user));
-        }
-        return user;
-    });
+    return fetch('/api/auth/login', requestOptions).then(_helpers.handleResponse).then(_helpers.storeToken);
 }
 
 function logout() {
@@ -26095,7 +26093,7 @@ function register(user) {
         body: JSON.stringify(user)
     };
 
-    return fetch('/api/auth/register', requestOptions).then(_helpers.handleResponse);
+    return fetch('/api/auth/register', requestOptions).then(_helpers.handleResponse).then(_helpers.storeToken);
 }
 
 function update(user) {
@@ -26136,7 +26134,7 @@ var _services = __webpack_require__(34);
 
 var _ = __webpack_require__(4);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 var userActions = exports.userActions = {
     login: login,
@@ -26171,8 +26169,11 @@ function login(username, password) {
 }
 
 function logout() {
-    _services.userService.logout();
-    return { type: _constants.userConstants.LOGOUT };
+    return function (dispatch) {
+        _services.userService.logout();
+        dispatch({ type: _constants.userConstants.LOGOUT });
+        // window.location.href = '/';
+    };
 }
 
 function register(user) {
@@ -26181,7 +26182,7 @@ function register(user) {
 
         _services.userService.register(user).then(function (user) {
             dispatch(success());
-            _helpers.history.push('/login');
+            _helpers.history.push('/');
             dispatch(_.alertActions.success('Registration successful'));
         }, function (error) {
             dispatch(failure(error.toString()));
@@ -26193,7 +26194,7 @@ function register(user) {
         return { type: _constants.userConstants.REGISTER_REQUEST, user: user };
     }
     function success(user) {
-        return { type: _constants.userConstants.REGISTER_SUCCESS, user: user };
+        return { type: _constants.userConstants.LOGIN_SUCCESS, user: user };
     }
     function failure(error) {
         return { type: _constants.userConstants.REGISTER_FAILURE, error: error };
@@ -26258,6 +26259,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.halfLife = halfLife;
 exports.healthPercentage = healthPercentage;
 exports.displayFace = displayFace;
+exports.secondsToHms = secondsToHms;
 function halfLife(_ref) {
     var sip = _ref.sip,
         _ref$unix_now = _ref.unix_now,
@@ -26316,6 +26318,18 @@ function displayFace(_ref3) {
     return '🧟';
 }
 
+function secondsToHms(d) {
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? ' hour, ' : ' hours, ') : '';
+    var mDisplay = m > 0 ? m + (m == 1 ? ' minute, ' : ' minutes, ') : '';
+    var sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : '';
+    return hDisplay + mDisplay + sDisplay;
+}
+
 /***/ }),
 /* 104 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -26327,6 +26341,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.handleResponse = handleResponse;
+exports.storeToken = storeToken;
 
 var _actions = __webpack_require__(4);
 
@@ -26344,6 +26359,14 @@ function handleResponse(response) {
 
         return data;
     });
+}
+function storeToken(response) {
+    // login successful if there's a jwt token in the response
+    if (response.token) {
+        // store response details and jwt token in local storage to keep response logged in between page refreshes
+        localStorage.setItem('user', JSON.stringify(response));
+    }
+    return response;
 }
 
 /***/ }),
@@ -26385,7 +26408,7 @@ exports.PrivateRoute = PrivateRoute;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
@@ -26451,7 +26474,7 @@ BrowserRouter.propTypes = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
@@ -26527,7 +26550,7 @@ HashRouter.propTypes = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
@@ -26805,7 +26828,7 @@ Prompt.contextTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_invariant__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_invariant___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_invariant__);
@@ -26941,7 +26964,7 @@ Redirect.contextTypes = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_invariant__);
@@ -27122,7 +27145,7 @@ StaticRouter.childContextTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_warning__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_warning__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_warning___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_warning__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_invariant__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_invariant___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_invariant__);
@@ -27332,7 +27355,7 @@ var _reactRouterDom = __webpack_require__(10);
 
 var _reactRedux = __webpack_require__(8);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 var _actions = __webpack_require__(4);
 
@@ -27479,7 +27502,7 @@ var _reactRedux = __webpack_require__(8);
 
 var _actions = __webpack_require__(4);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27530,6 +27553,9 @@ var HomePage = function (_React$Component) {
             return function (e) {
                 return _this.props.dispatch(_actions.sipActions.consume(drink));
             };
+        }, _this.logout = function (e) {
+            _this.props.dispatch(_actions.userActions.logout());
+            window.location.href = '/';
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -27557,6 +27583,15 @@ var HomePage = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'row store-front' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'col-12' },
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: this.logout, className: 'btn btn-primary' },
+                        'Log Out'
+                    )
+                ),
                 _react2.default.createElement(
                     'div',
                     { className: 'col-md-6' },
@@ -27616,11 +27651,6 @@ var HomePage = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'dude text-md-center text-right' },
-                        _react2.default.createElement(
-                            'span',
-                            null,
-                            Math.ceil(this.state.health / 20)
-                        ),
                         _react2.default.createElement('div', { className: 'face', dangerouslySetInnerHTML: { __html: this.state.face } }),
                         this.state.speechBubble && _react2.default.createElement(
                             'div',
@@ -27629,8 +27659,8 @@ var HomePage = function (_React$Component) {
                         ),
                         _react2.default.createElement(
                             'div',
-                            { 'class': 'health-bar' },
-                            _react2.default.createElement('div', { 'class': 'progress', style: { width: this.state.health + '%' } })
+                            { className: 'health-bar' },
+                            _react2.default.createElement('div', { className: 'progress', style: { width: this.state.health + '%' } })
                         )
                     )
                 ),
@@ -27857,6 +27887,8 @@ var _reactRedux = __webpack_require__(8);
 
 var _actions = __webpack_require__(4);
 
+var _helpers = __webpack_require__(5);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -27880,7 +27912,8 @@ var RegisterPage = function (_React$Component) {
                 email: '',
                 name: '',
                 password: '',
-                confirm: ''
+                confirm: '',
+                metabolism: 18000
             },
             submitted: false
         };
@@ -27957,7 +27990,7 @@ var RegisterPage = function (_React$Component) {
                             { htmlFor: 'name' },
                             'Username'
                         ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'name', value: user.name, onChange: this.handleChange }),
+                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'name', id: 'register-name', value: user.name, onChange: this.handleChange }),
                         submitted && !user.name && _react2.default.createElement(
                             'div',
                             { className: 'help-block' },
@@ -27987,11 +28020,26 @@ var RegisterPage = function (_React$Component) {
                             { htmlFor: 'confirm' },
                             'Confirm Password'
                         ),
-                        _react2.default.createElement('input', { type: 'confirm', className: 'form-control', name: 'confirm', value: user.confirm, onChange: this.handleChange }),
+                        _react2.default.createElement('input', { type: 'password', className: 'form-control', name: 'confirm', value: user.confirm, onChange: this.handleChange }),
                         submitted && !user.confirm && _react2.default.createElement(
                             'div',
                             { className: 'help-block' },
                             'Confirmation is required'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group' + (submitted && !user.metabolism ? ' has-error' : '') },
+                        _react2.default.createElement(
+                            'label',
+                            { htmlFor: 'metabolism' },
+                            'Metabolism (half-life seconds, typically 5 hours for humans)'
+                        ),
+                        _react2.default.createElement('input', { type: 'metabolism', className: 'form-control', name: 'metabolism', value: user.metabolism, onChange: this.handleChange }),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'help-block' },
+                            (0, _helpers.secondsToHms)(user.metabolism)
                         )
                     ),
                     _react2.default.createElement(

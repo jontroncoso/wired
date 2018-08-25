@@ -3,6 +3,8 @@
 namespace Tests\Browser\tests;
 
 use Tests\Browser\Pages\LoginPage;
+use Tests\Browser\Pages\RegisterPage;
+use Tests\Browser\Pages\HomePage;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
@@ -15,28 +17,40 @@ class LoginTest extends DuskTestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testLogin()
     {
-        $user = factory(\App\Model\User::class)->create(['password' => bcrypt('password')]);
-        $this->browse(function (Browser $browser) use ($user) {
+        $user = factory(\App\Model\User::class)->make(['password' => bcrypt('password')]);
+        $drink = factory(\App\Model\Drink::class)->create();
+        $this->browse(function (Browser $browser) use ($user, $drink) {
             $browser->visit('/')
                 ->on(new LoginPage)
                 ->assertSee('Login')
                 ->assertVisible('@email')
                 ->assertVisible('@password')
                 ->assertDontSee('@confirm')
+                ->click('@registerLink')
+
+                ->on(new RegisterPage)
                 ->type('@email', $user->email.'bad')
+                ->type('@username', $user->name)
                 ->type('@password', 'password')
-                ->click('@submit')
-                ->whenAvailable('@error', function($error) {
-                    $error->assertSee('The given data was invalid.');
-                })
-                ->type('@email', $user->email)
+                ->type('@confirm', 'password')
                 ->click('@submit')
                 ->waitUntilMissing('@email')
-                ->assertPathIs('/')
+
                 ->on(new HomePage)
-                ->whenAvailable()
+                ->whenAvailable('@chalkboard', function($chalkboard) use ($drink)
+                {
+                    $chalkboard
+                        ->assertSee('Wired Cafe')
+                        ->assertSee($drink->dosage.'mg')
+                        ->mouseover('@lastDrink')
+                        ;
+                })
+                ->whenAvailable('@speechBubble', function($speechBubble) use ($drink) {
+                    $speechBubble->assertSee($drink->description);
+                })
+                ->click('@lastDrink')
                 ;
         });
     }

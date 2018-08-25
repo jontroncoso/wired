@@ -15,3 +15,11 @@ export function handleResponse(response) {
         return data;
     });
 }
+export function storeToken(response) {
+    // login successful if there's a jwt token in the response
+    if (response.token) {
+        // store response details and jwt token in local storage to keep response logged in between page refreshes
+        localStorage.setItem('user', JSON.stringify(response));
+    }
+    return response;
+}

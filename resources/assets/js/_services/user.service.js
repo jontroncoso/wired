@@ -1,4 +1,4 @@
-import { authHeader, handleResponse } from '../_helpers';
+import { authHeader, handleResponse, storeToken } from '../_helpers';
 
 export const userService = {
     login,
@@ -19,14 +19,7 @@ function login(email, password) {
 
     return fetch('/api/auth/login', requestOptions)
         .then(handleResponse)
-        .then(user => {
-            // login successful if there's a jwt token in the response
-            if (user.token) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
-            }
-            return user;
-        });
+        .then(storeToken);
 }
 
 function logout() {
@@ -59,7 +52,9 @@ function register(user) {
         body: JSON.stringify(user)
     };
 
-    return fetch('/api/auth/register', requestOptions).then(handleResponse);
+    return fetch('/api/auth/register', requestOptions)
+        .then(handleResponse)
+        .then(storeToken);
 }
 
 function update(user) {
