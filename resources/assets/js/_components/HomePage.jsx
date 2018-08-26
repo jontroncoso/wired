@@ -103,7 +103,7 @@ class HomePage extends React.Component {
                 </div>
                 <div className="col-md-6 in-front">
                     <div className="dude text-right">
-                        <h2>{this.props.users.item.name}</h2>
+                        <h2 className="text-left">{this.props.users.item.name}</h2>
                         <div className="health-bar">
                             <div className="progress" style={{width: this.state.health + '%'}}>
                                 <span className={this.state.health < 20 ? 'aligned-left' : 'aligned-right'}>{Math.round(this.state.amount)}mg</span>
@@ -118,7 +118,7 @@ class HomePage extends React.Component {
                         {this.state.formattedSips.map((sip, index) =>
                             (
                                 <div className="log-entry">
-                                    <h2>{sip.drink.name}</h2>
+                                    <h4>{sip.drink.name}</h4>
                                     <div className="health-bar">
                                         <div className="progress" style={{width: sip.health + '%'}}>
                                             <span className={sip.health < 20 ? 'aligned-left' : 'aligned-right'}>{Math.round(sip.amount)}mg</span>
