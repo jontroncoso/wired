@@ -4,7 +4,8 @@ export function sips(state = {items: []}, action) {
     switch (action.type) {
     case sipConstants.GETALL_REQUEST:
         return {
-            loading: true
+            loading: true,
+            items: state.items,
         };
     case sipConstants.GETALL_SUCCESS:
         return {

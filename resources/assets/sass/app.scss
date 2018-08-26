@@ -76,6 +76,7 @@
         }
         .face {
             font-size: 30vw;
+            line-height: 1.25em;
         }
         .health-bar {
             width: 100%;
@@ -90,8 +91,42 @@
                 height: 100%;
                 background-color: $gray-900;
                 border-radius: 0;
+                overflow: visible;
+                transition: width 100ms;
+
+                span {
+                    color: $white;
+                    float: right;
+                    display: inline-block;
+                    position: absolute;
+                    right: 0;
+                    font-size: 2em;
+                    padding: 0.35em 0.75em;
+
+                    transition: transform 0.75s, color 0.75s;
+
+                    &.aligned-left {
+                        transform: translateX(100%);
+                        color: $black;
+                    }
+                }
             }
         }
     }
 }
 .in-front { z-index: 2 }
+
+@include media-breakpoint-up(lg) {
+    div.store-front .dude .face {
+        font-size: 20em;
+    }
+}
+@include media-breakpoint-down(md) {
+    div.store-front div.dude {
+        margin-top: 5em;
+    }
+    div.store-front div.dude .speech-bubble {
+        left: 0;
+        width: 100%;
+    }
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { drinkActions, sipActions, userActions } from '../_actions';
+import { drinkActions, sipActions, authActions } from '../_actions';
 
 import { timer, halfLife, healthPercentage, displayFace } from '../_helpers';
 
@@ -17,12 +17,16 @@ class HomePage extends React.Component {
         this.props.dispatch(drinkActions.getAll());
         this.props.dispatch(sipActions.getAll());
         this.setState({timer: setInterval(this.tick, 100)});
+        if(!this.props.users || !this.props.users.item || !this.props.users.item.id) {
+            this.props.dispatch(authActions.getMe());
+        }
     }
 
     tick = () => {
         const unix_now = Math.round((new Date()).getTime());
-        const amount = this.props.sips.items
-            .map(sip => halfLife({sip, unix_now}))
+        const me = this.props.users.item ? this.props.users.item : [];
+        const amount = (this.props.sips.items ? this.props.sips.items : [])
+            .map(sip => halfLife({sip, unix_now, metabolism: me.metabolism}))
             .reduce((a, b) => a + b, 0);
         const health = healthPercentage({amount});
 
@@ -44,7 +48,7 @@ class HomePage extends React.Component {
 
     logout = e =>
     {
-        this.props.dispatch(userActions.logout());
+        this.props.dispatch(authActions.logout());
         window.location.href = '/';
     }
 
@@ -77,17 +81,18 @@ class HomePage extends React.Component {
                     }
                 </div>
                 <div className="col-md-6 in-front">
-                    <div className="dude text-md-center text-right">
+                    <div className="dude text-right">
+                        <h2>{this.props.users.item.name}</h2>
                         <div className="face" dangerouslySetInnerHTML={{__html: this.state.face}}></div>
                         {this.state.speechBubble && <div className="speech-bubble">{this.state.speechBubble}</div>}
                         <div className="health-bar">
-                            <div className="progress" style={{width: this.state.health + '%'}}></div>
+                            <div className="progress" style={{width: this.state.health + '%'}}>
+                                <span className={this.state.health < 20 ? 'aligned-left' : 'aligned-right'}>{Math.round(this.state.amount)}mg</span>
+                            </div>
                         </div>
 
                     </div>
                 </div>
-                <pre className="col">{this.state.amount}</pre>
-                <pre className="col">{this.state.health}</pre>
             </div>
 
         );
@@ -95,12 +100,13 @@ class HomePage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { authentication, drinks, sips } = state;
+    const { authentication, drinks, sips, users } = state;
     const { user } = authentication;
     return {
         user,
         drinks,
         sips,
+        users,
     };
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { userActions } from '../_actions';
+import { authActions } from '../_actions';
 
 import { secondsToHms } from '../_helpers';
 
@@ -43,7 +43,7 @@ class RegisterPage extends React.Component {
         const { user } = this.state;
         const { dispatch } = this.props;
         if (user.name && user.email && user.password && user.confirm) {
-            dispatch(userActions.register(user));
+            dispatch(authActions.register(user));
         }
     }
 

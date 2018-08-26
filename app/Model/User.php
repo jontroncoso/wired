@@ -11,6 +11,8 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
+    public $casts = ['metabolism' => 'integer'];
+
     /**
      * The attributes that are mass assignable.
      *

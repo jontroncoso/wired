@@ -1,4 +1,4 @@
-import {userActions} from '../_actions';
+import {authActions} from '../_actions';
 export function authHeader() {
     // return authorization header with jwt token
     let user = JSON.parse(localStorage.getItem('user'));
@@ -10,7 +10,7 @@ export function authHeader() {
             'Content-Type': 'application/json',
         };
     } else {
-        userActions.logout();
+        authActions.logout();
         window.location.href = '/login';
         return {};
     }

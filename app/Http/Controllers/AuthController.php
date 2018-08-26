@@ -64,7 +64,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return $this->respondWithToken(JWTAuth::fromUser(\Auth::user()));
     }
 
     /**
@@ -96,12 +96,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken($token = false)
     {
         return response()->json([
-            'token' => $token,
+            'token'      => $token,
             'token_type' => 'bearer',
-            'expires_in' => 60 * 60
+            'expires_in' => 60 * 60,
+            'me'         => \Auth::user(),
         ]);
     }
 }

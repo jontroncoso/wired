@@ -1,5 +1,4 @@
 import { drinkConstants } from '../_constants';
-import { drinkService } from '../_services';
 import { alertActions } from './';
 import { history, handleResponse, authHeader } from '../_helpers';
 

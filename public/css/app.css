@@ -10545,6 +10545,7 @@ a.text-dark:focus {
 
 .store-front .dude .face {
   font-size: 30vw;
+  line-height: 1.25em;
 }
 
 .store-front .dude .health-bar {
@@ -10561,9 +10562,49 @@ a.text-dark:focus {
   height: 100%;
   background-color: #212529;
   border-radius: 0;
+  overflow: visible;
+  -webkit-transition: width 100ms;
+  transition: width 100ms;
+}
+
+.store-front .dude .health-bar .progress span {
+  color: #FFFFFF;
+  float: right;
+  display: inline-block;
+  position: absolute;
+  right: 0;
+  font-size: 2em;
+  padding: 0.35em 0.75em;
+  -webkit-transition: color 0.75s, -webkit-transform 0.75s;
+  transition: color 0.75s, -webkit-transform 0.75s;
+  transition: transform 0.75s, color 0.75s;
+  transition: transform 0.75s, color 0.75s, -webkit-transform 0.75s;
+}
+
+.store-front .dude .health-bar .progress span.aligned-left {
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+  color: #000;
 }
 
 .in-front {
   z-index: 2;
+}
+
+@media (min-width: 992px) {
+  div.store-front .dude .face {
+    font-size: 20em;
+  }
+}
+
+@media (max-width: 991.98px) {
+  div.store-front div.dude {
+    margin-top: 5em;
+  }
+
+  div.store-front div.dude .speech-bubble {
+    left: 0;
+    width: 100%;
+  }
 }
 

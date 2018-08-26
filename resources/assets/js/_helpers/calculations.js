@@ -1,13 +1,6 @@
 export function halfLife({sip, unix_now = 0, metabolism = 10}){
     const unixNow = (!unix_now ? Math.round((new Date()).getTime()) : unix_now);
-    // return parseInt(Math.exp(-(1/metabolism*parseInt(unixNow-sip.created_at)) + Math.log(sip.dosage)));
-    // console.log('sip.dosage ', sip.dosage);
-    // console.log('metabolism ', metabolism);
-    // console.log('unixNow ', unixNow);
-    // console.log('sip.created_at ', sip.created_at);
-    // console.log('sip.dosage/Math.pow(2,metabolism/parseInt(unixNow-sip.created_at)) ', sip.dosage/Math.pow(2,parseInt(unixNow-sip.created_at)/metabolism));
-    // console.log('parseInt((unixNow)-(sip.created_at*1000)) ', parseInt((unixNow)-(sip.created_at*1000)));
-    const amount = parseInt(sip.dosage/Math.pow(2,((parseInt((unixNow)-(sip.created_at*1000))/10000)*10)/metabolism)*100)/100;
+    const amount = parseInt(sip.dosage/Math.pow(2,(parseInt((unixNow)-(sip.created_at*1000))/1000)/metabolism)*100)/100;
     return amount > 1 ? amount : 0;
 }
 
