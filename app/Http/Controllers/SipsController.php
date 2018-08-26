@@ -17,7 +17,7 @@ class SipsController extends Controller
     {
         $user = \Auth::user();
         return response()->json([
-            'sips'  => $user->sips()->get()->map(function($sip){
+            'sips'  => $user->sips()->orderBy('created_at', 'desc')->get()->map(function($sip){
                 $sip->append('dosage');
                 return $sip;
             }),

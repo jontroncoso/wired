@@ -10548,14 +10548,14 @@ a.text-dark:focus {
   line-height: 1.25em;
 }
 
-.store-front .dude .health-bar {
+.health-bar {
   width: 100%;
   height: 50px;
   background-color: #ced4da;
   position: relative;
 }
 
-.store-front .dude .health-bar .progress {
+.health-bar .progress {
   position: absolute;
   left: 0;
   top: 0;
@@ -10567,7 +10567,7 @@ a.text-dark:focus {
   transition: width 100ms;
 }
 
-.store-front .dude .health-bar .progress span {
+.health-bar .progress span {
   color: #FFFFFF;
   float: right;
   display: inline-block;
@@ -10581,7 +10581,7 @@ a.text-dark:focus {
   transition: transform 0.75s, color 0.75s, -webkit-transform 0.75s;
 }
 
-.store-front .dude .health-bar .progress span.aligned-left {
+.health-bar .progress span.aligned-left {
   -webkit-transform: translateX(100%);
           transform: translateX(100%);
   color: #000;

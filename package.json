@@ -46,6 +46,7 @@
     "dependencies": {
         "emoji-dictionary": "^1.0.9",
         "history": "^4.7.2",
+        "moment": "^2.22.2",
         "react-redux": "^5.0.7",
         "react-router-dom": "^4.3.1",
         "redux": "^4.0.0",
