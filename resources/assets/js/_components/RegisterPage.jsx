@@ -53,13 +53,15 @@ class RegisterPage extends React.Component {
         return (
             <div className="col-md-6 col-md-offset-3">
                 <h2>Register</h2>
+                <p>None of this matters. You can make up info. Nobody will be emailed. This is just to show off my JWT Authentication.</p>
                 <form name="form" onSubmit={this.handleSubmit}>
                     <div className={'form-group' + (submitted && !user.email ? ' has-error' : '')}>
                         <label htmlFor="name">Email</label>
                         <input type="email" className="form-control" name="email" value={user.email} onChange={this.handleChange} />
                         {submitted && !user.email &&
-                            <div className="help-block">Last Name is required</div>
+                            <div className="help-block">Email is required</div>
                         }
+                        <div className="help-block">Don't worry. Nobody is going to get emailed. You can make something up if you prefer</div>
                     </div>
                     <div className={'form-group' + (submitted && !user.name ? ' has-error' : '')}>
                         <label htmlFor="name">Username</label>
