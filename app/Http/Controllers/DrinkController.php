@@ -51,6 +51,8 @@ class DrinkController extends Controller
      */
     public function update(DrinkRequest $request, Drink $drink)
     {
+        \Log::info('$request->validated()');
+        \Log::info($request->validated());
         $drink->update($request->validated());
         return response()->json(['drink' => $drink]);
     }
@@ -63,6 +65,7 @@ class DrinkController extends Controller
      */
     public function destroy(Drink $drink)
     {
-        abort(404);
+        $drink->delete();
+        return response()->json(['removed' => true]);
     }
 }

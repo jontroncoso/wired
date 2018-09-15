@@ -95,6 +95,7 @@ function logout() {
     return dispatch => {
         localStorage.removeItem('user');
         dispatch({ type: userConstants.LOGOUT });
+        dispatch(alertActions.clear());
     };
 
 }

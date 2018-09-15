@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import moment from 'moment';
+
 import { drinkActions, sipActions, authActions } from '../_actions';
-
 import { timer, halfLife, healthPercentage, displayFace } from '../_helpers';
-
 import { DrinkModal } from '../_shared';
 
 class HomePage extends React.Component {
@@ -28,6 +27,9 @@ class HomePage extends React.Component {
     {
         if (this.props.match.params.id && this.props.match.params.id !== previousProps.match.params.id) {
             this.props.dispatch(drinkActions.get(this.props.match.params.id));
+        }
+        if (this.props.drinks.modalPosition === 'closed' && this.props.drinks.modalPosition !== previousProps.drinks.modalPosition) {
+            this.closeModal();
         }
     }
 
@@ -78,7 +80,7 @@ class HomePage extends React.Component {
     onMouseOver = drink => e => this.setState({speechBubble: drink.description});
     onMouseOut = e => this.setState({speechBubble: ''});
 
-    consume = drink => e => this.props.dispatch(sipActions.consume(drink));
+    createDrinkModal = e => this.props.dispatch(drinkActions.createDrinkModal());
 
     logout = e =>
     {
@@ -88,15 +90,21 @@ class HomePage extends React.Component {
 
     closeModal = e => {
         this.props.dispatch(drinkActions.closeModal());
+        this.props.dispatch(drinkActions.getAll());
+        this.props.dispatch(sipActions.getAll());
         this.props.history.push('/cafe');
     }
 
+
     render() {
-        const { user, drinks } = this.props;
+        const { users, drinks } = this.props;
 
         return (
             <div className="row store-front">
-                <div className="col-12"><button onClick={this.logout} className="btn btn-primary">Log Out</button></div>
+                <div className="col-12">
+                    <button onClick={this.logout} className="btn btn-primary">Log Out</button>
+                    <button onClick={this.createDrinkModal} className="btn btn-success">Add Drink</button>
+                </div>
                 <div className="col-md-6">
                     {drinks.loading && <em>Loading drinks...</em>}
                     {drinks.error && <span className="text-danger">ERROR: {drinks.error}</span>}
@@ -150,8 +158,10 @@ class HomePage extends React.Component {
                     </div>
                 </div>
                 <DrinkModal
+                    open={drinks.modalPosition === 'open'}
+                    dispatch={this.props.dispatch}
+                    isAdmin={users.isAdmin}
                     drink={drinks.item}
-                    open={drinks.openModal}
                     close={this.closeModal}
                     ></DrinkModal>
             </div>

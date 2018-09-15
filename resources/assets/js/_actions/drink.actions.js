@@ -5,6 +5,9 @@ import { history, handleResponse, authHeader } from '../_helpers';
 export const drinkActions = {
     getAll,
     get,
+    remove,
+    save,
+    createDrinkModal,
     closeModal,
 };
 
@@ -51,7 +54,52 @@ function get(drinkId) {
     function success(drink) { return { type: drinkConstants.GET_SUCCESS, drink } }
     function failure(error) { return { type: drinkConstants.GET_FAILURE, error } }
 }
+function remove(drinkId) {
+    console.log('drinkId ', drinkId);
+    return dispatch => {
+
+        const requestOptions = {
+            method: 'DELETE',
+            headers: authHeader()
+        };
+
+        return fetch('/api/drinks/' + drinkId, requestOptions)
+            .then(handleResponse)
+            .then(
+                data => dispatch({ type: drinkConstants.DELETE_SUCCESS }),
+                error => dispatch(failure(error.toString()))
+            );
+    };
+
+    function failure(error) { return { type: drinkConstants.DELETE_FAILURE, error } }
+}
+function save(drink) {
+    console.log('drinkId ', drink);
+    return dispatch => {
+
+        const requestOptions = {
+            method: (drink.id ? 'PUT' : 'POST'),
+            headers: authHeader(),
+            body: JSON.stringify(drink),
+        };
+
+        const url = drink.id ? '/api/drinks/' + drink.id : '/api/drinks';
+
+        return fetch(url, requestOptions)
+            .then(handleResponse)
+            .then(
+                data => dispatch({ type: drinkConstants.POST_SUCCESS }),
+                error => dispatch(failure(error.toString()))
+            );
+    };
+
+    function failure(error) { return { type: drinkConstants.POST_FAILURE, error } }
+}
 
 function closeModal() {
     return dispatch => dispatch({ type: drinkConstants.CLOSE_MODAL});
+}
+
+function createDrinkModal() {
+    return dispatch => dispatch({ type: drinkConstants.CREATE_MODAL});
 }

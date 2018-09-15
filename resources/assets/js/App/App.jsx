@@ -17,7 +17,8 @@ class App extends React.Component {
     }
 
     render() {
-        const { alert } = this.props;
+        const { alert, authentication } = this.props;
+        // if()
         return (
             <div className="jumbotron">
                 <div className="container">
@@ -35,7 +36,7 @@ class App extends React.Component {
                                             ? <Redirect to={{ pathname: '/cafe', state: { from: props.location } }} />
                                             : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
                                     )} />
-                                    <PrivateRoute exact path="/cafe/:id?" component={HomePage} />
+                                <PrivateRoute logout={authentication.logout} exact path="/cafe/:id?" component={HomePage} />
                                 </div>
                             </Router>
                         </div>
@@ -47,9 +48,10 @@ class App extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert } = state;
+    const { authentication, alert } = state;
     return {
-        alert
+        alert,
+        authentication,
     };
 }
 

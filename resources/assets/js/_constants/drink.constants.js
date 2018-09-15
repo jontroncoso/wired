@@ -20,4 +20,5 @@ export const drinkConstants = {
     DELETE_FAILURE: 'DRINKS_DELETE_FAILURE',
 
     CLOSE_MODAL: 'CLOSE_MODAL',
+    CREATE_MODAL: 'CREATE_MODAL',
 };

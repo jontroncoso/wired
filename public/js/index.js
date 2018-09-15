@@ -42964,7 +42964,7 @@ function authentication() {
                 user: action.user
             };
         case _constants.userConstants.LOGIN_FAILURE:
-            return {};
+            return { logout: true };
         case _constants.userConstants.LOGOUT:
             return { logout: true };
 
@@ -43052,7 +43052,8 @@ var drinkConstants = exports.drinkConstants = {
     DELETE_SUCCESS: 'DRINKS_DELETE_SUCCESS',
     DELETE_FAILURE: 'DRINKS_DELETE_FAILURE',
 
-    CLOSE_MODAL: 'CLOSE_MODAL'
+    CLOSE_MODAL: 'CLOSE_MODAL',
+    CREATE_MODAL: 'CREATE_MODAL'
 };
 
 /***/ }),
@@ -43137,15 +43138,26 @@ function drinks() {
         case _constants.drinkConstants.GET_SUCCESS:
             return Object.assign({}, state, {
                 item: action.drink,
-                openModal: true
+                modalPosition: 'open'
             });
-        case _constants.drinkConstants.CLOSE_MODAL:
-            return Object.assign({}, state, { openModal: false });
         case _constants.drinkConstants.GETALL_SUCCESS:
             return Object.assign({}, state, { items: action.drinks });
         case _constants.drinkConstants.GETALL_FAILURE:
         case _constants.drinkConstants.GET_FAILURE:
             return { error: action.error };
+        case _constants.drinkConstants.POST_SUCCESS:
+        case _constants.drinkConstants.PUT_SUCCESS:
+        case _constants.drinkConstants.DELETE_SUCCESS:
+        case _constants.drinkConstants.CLOSE_MODAL:
+            return Object.assign({}, state, { modalPosition: 'closed' });
+        case _constants.drinkConstants.CREATE_MODAL:
+            return Object.assign({}, state, { modalPosition: 'open', item: {
+                    name: '',
+                    description: '',
+                    price: 0,
+                    dosage: 0,
+                    id: 0
+                } });
         default:
             return state;
     }
@@ -43207,11 +43219,11 @@ function users() {
     var action = arguments[1];
 
     switch (action.type) {
-        case _constants.userConstants.LOGOUT:
-            // add 'deleting:true' property to user being deleted
-            return {};
         case _constants.userConstants.LOGIN_SUCCESS:
-            return { item: action.me };
+            return {
+                item: action.me,
+                isAdmin: action.me.id === 1
+            };
         default:
             return state;
     }
@@ -43417,6 +43429,9 @@ var _helpers = __webpack_require__(7);
 var drinkActions = exports.drinkActions = {
     getAll: getAll,
     get: get,
+    remove: remove,
+    save: save,
+    createDrinkModal: createDrinkModal,
     closeModal: closeModal
 };
 
@@ -43473,10 +43488,59 @@ function get(drinkId) {
         return { type: _constants.drinkConstants.GET_FAILURE, error: error };
     }
 }
+function remove(drinkId) {
+    console.log('drinkId ', drinkId);
+    return function (dispatch) {
+
+        var requestOptions = {
+            method: 'DELETE',
+            headers: (0, _helpers.authHeader)()
+        };
+
+        return fetch('/api/drinks/' + drinkId, requestOptions).then(_helpers.handleResponse).then(function (data) {
+            return dispatch({ type: _constants.drinkConstants.DELETE_SUCCESS });
+        }, function (error) {
+            return dispatch(failure(error.toString()));
+        });
+    };
+
+    function failure(error) {
+        return { type: _constants.drinkConstants.DELETE_FAILURE, error: error };
+    }
+}
+function save(drink) {
+    console.log('drinkId ', drink);
+    return function (dispatch) {
+
+        var requestOptions = {
+            method: drink.id ? 'PUT' : 'POST',
+            headers: (0, _helpers.authHeader)(),
+            body: JSON.stringify(drink)
+        };
+
+        var url = drink.id ? '/api/drinks/' + drink.id : '/api/drinks';
+
+        return fetch(url, requestOptions).then(_helpers.handleResponse).then(function (data) {
+            return dispatch({ type: _constants.drinkConstants.POST_SUCCESS });
+        }, function (error) {
+            return dispatch(failure(error.toString()));
+        });
+    };
+
+    function failure(error) {
+        return { type: _constants.drinkConstants.POST_FAILURE, error: error };
+    }
+}
 
 function closeModal() {
     return function (dispatch) {
         return dispatch({ type: _constants.drinkConstants.CLOSE_MODAL });
+    };
+}
+
+function createDrinkModal() {
+    return function (dispatch) {
+        return dispatch({ type: _constants.drinkConstants.CREATE_MODAL });
     };
 }
 
@@ -43576,6 +43640,7 @@ function logout() {
     return function (dispatch) {
         localStorage.removeItem('user');
         dispatch({ type: _constants.userConstants.LOGOUT });
+        dispatch(_.alertActions.clear());
     };
 }
 
@@ -43727,10 +43792,11 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 
 var PrivateRoute = function PrivateRoute(_ref) {
     var Component = _ref.component,
-        rest = _objectWithoutProperties(_ref, ['component']);
+        logout = _ref.logout,
+        rest = _objectWithoutProperties(_ref, ['component', 'logout']);
 
     return _react2.default.createElement(_reactRouterDom.Route, _extends({}, rest, { render: function render(props) {
-            return localStorage.getItem('user') ? _react2.default.createElement(Component, props) : _react2.default.createElement(_reactRouterDom.Redirect, { to: { pathname: '/login', state: { from: props.location } } });
+            return !logout && localStorage.getItem('user') ? _react2.default.createElement(Component, props) : _react2.default.createElement(_reactRouterDom.Redirect, { to: { pathname: '/login', state: { from: props.location } } });
         } }));
 };
 exports.PrivateRoute = PrivateRoute;
@@ -44720,7 +44786,10 @@ var App = function (_React$Component) {
     _createClass(App, [{
         key: 'render',
         value: function render() {
-            var alert = this.props.alert;
+            var _props = this.props,
+                alert = _props.alert,
+                authentication = _props.authentication;
+            // if()
 
             return _react2.default.createElement(
                 'div',
@@ -44750,7 +44819,7 @@ var App = function (_React$Component) {
                                     _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', render: function render(props) {
                                             return localStorage.getItem('user') ? _react2.default.createElement(_reactRouterDom.Redirect, { to: { pathname: '/cafe', state: { from: props.location } } }) : _react2.default.createElement(_reactRouterDom.Redirect, { to: { pathname: '/login', state: { from: props.location } } });
                                         } }),
-                                    _react2.default.createElement(_helpers.PrivateRoute, { exact: true, path: '/cafe/:id?', component: _components.HomePage })
+                                    _react2.default.createElement(_helpers.PrivateRoute, { logout: authentication.logout, exact: true, path: '/cafe/:id?', component: _components.HomePage })
                                 )
                             )
                         )
@@ -44764,10 +44833,12 @@ var App = function (_React$Component) {
 }(_react2.default.Component);
 
 function mapStateToProps(state) {
-    var alert = state.alert;
+    var authentication = state.authentication,
+        alert = state.alert;
 
     return {
-        alert: alert
+        alert: alert,
+        authentication: authentication
     };
 }
 
@@ -44917,10 +44988,8 @@ var HomePage = function (_React$Component) {
             return _this.setState({ speechBubble: '' });
         };
 
-        _this.consume = function (drink) {
-            return function (e) {
-                return _this.props.dispatch(_actions.sipActions.consume(drink));
-            };
+        _this.createDrinkModal = function (e) {
+            return _this.props.dispatch(_actions.drinkActions.createDrinkModal());
         };
 
         _this.logout = function (e) {
@@ -44930,6 +44999,8 @@ var HomePage = function (_React$Component) {
 
         _this.closeModal = function (e) {
             _this.props.dispatch(_actions.drinkActions.closeModal());
+            _this.props.dispatch(_actions.drinkActions.getAll());
+            _this.props.dispatch(_actions.sipActions.getAll());
             _this.props.history.push('/cafe');
         };
 
@@ -44944,6 +45015,9 @@ var HomePage = function (_React$Component) {
         value: function componentDidUpdate(previousProps) {
             if (this.props.match.params.id && this.props.match.params.id !== previousProps.match.params.id) {
                 this.props.dispatch(_actions.drinkActions.get(this.props.match.params.id));
+            }
+            if (this.props.drinks.modalPosition === 'closed' && this.props.drinks.modalPosition !== previousProps.drinks.modalPosition) {
+                this.closeModal();
             }
         }
     }, {
@@ -44967,7 +45041,7 @@ var HomePage = function (_React$Component) {
             var _this2 = this;
 
             var _props = this.props,
-                user = _props.user,
+                users = _props.users,
                 drinks = _props.drinks;
 
 
@@ -44981,6 +45055,11 @@ var HomePage = function (_React$Component) {
                         'button',
                         { onClick: this.logout, className: 'btn btn-primary' },
                         'Log Out'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: this.createDrinkModal, className: 'btn btn-success' },
+                        'Add Drink'
                     )
                 ),
                 _react2.default.createElement(
@@ -45107,8 +45186,10 @@ var HomePage = function (_React$Component) {
                     )
                 ),
                 _react2.default.createElement(_shared.DrinkModal, {
+                    open: drinks.modalPosition === 'open',
+                    dispatch: this.props.dispatch,
+                    isAdmin: users.isAdmin,
                     drink: drinks.item,
-                    open: drinks.openModal,
                     close: this.closeModal
                 })
             );
@@ -55749,6 +55830,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DrinkModal = undefined;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__(1);
@@ -55761,6 +55844,8 @@ var _actions = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -55770,63 +55855,218 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var DrinkModal = exports.DrinkModal = function (_React$Component) {
     _inherits(DrinkModal, _React$Component);
 
-    function DrinkModal(props) {
+    function DrinkModal() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
         _classCallCheck(this, DrinkModal);
 
-        var _this = _possibleConstructorReturn(this, (DrinkModal.__proto__ || Object.getPrototypeOf(DrinkModal)).call(this, props));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
 
-        _this.state = {
-            open: false
-        };
-
-        _this.close = function () {
-            _this.setState({
-                open: false
-            });
-        };
-
-        _this.state = {
-            open: props.open,
-            drink: props.drink
-        };
-        return _this;
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DrinkModal.__proto__ || Object.getPrototypeOf(DrinkModal)).call.apply(_ref, [this].concat(args))), _this), _this.state = { drink: {
+                name: '',
+                description: '',
+                price: 0,
+                dosage: 0,
+                id: 0
+            }
+        }, _this.onChange = function (e) {
+            return _this.setState({ drink: _extends({}, _this.state.drink, _defineProperty({}, e.target.name, e.target.value)) });
+        }, _this.resetForm = function (e) {
+            return _this.setState({ drink: _this.props.drink });
+        }, _this.consume = function (e) {
+            return _this.props.dispatch(_actions.sipActions.consume(_this.state.drink));
+        }, _this.removeDrink = function (e) {
+            return _this.props.dispatch(_actions.drinkActions.remove(_this.state.drink.id));
+        }, _this.saveDrink = function (e) {
+            e.preventDefault();
+            _this.props.dispatch(_actions.drinkActions.save(_this.state.drink));
+        }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(DrinkModal, [{
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(previousProps) {
+            if (this.props.drink && this.props.drink.id !== previousProps.drink.id) {
+                this.resetForm();
+            }
+        }
+    }, {
         key: 'render',
-
-
-        //
-        // onMouseOver = drink => e => this.setState({speechBubble: drink.description});
-        // onMouseOut = e => this.setState({speechBubble: ''});
-
         value: function render() {
+            var drink = this.state.drink;
+            var _props = this.props,
+                isAdmin = _props.isAdmin,
+                validation = _props.validation;
+
+            if (!drink) return _react2.default.createElement('div', null);
             return _react2.default.createElement(
                 _reactstrap.Modal,
                 { isOpen: this.props.open, toggle: this.props.close, className: this.props.className },
                 _react2.default.createElement(
-                    _reactstrap.ModalHeader,
-                    null,
-                    'Modal title'
-                ),
-                _react2.default.createElement(
-                    _reactstrap.ModalBody,
-                    null,
-                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-                ),
-                _react2.default.createElement(
-                    _reactstrap.ModalFooter,
-                    null,
+                    _reactstrap.Form,
+                    { onSubmit: this.saveDrink },
                     _react2.default.createElement(
-                        _reactstrap.Button,
-                        { color: 'primary', onClick: this.props.close },
-                        'Do Something'
+                        'div',
+                        { className: 'modal-header' },
+                        _react2.default.createElement(
+                            'h5',
+                            { className: 'modal-title' },
+                            drink.name
+                        ),
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'float-right' },
+                            '$',
+                            drink.price
+                        )
                     ),
-                    ' ',
                     _react2.default.createElement(
-                        _reactstrap.Button,
-                        { color: 'secondary', onClick: this.props.close },
-                        'Cancel'
+                        _reactstrap.ModalBody,
+                        null,
+                        !isAdmin ? drink.description : _react2.default.createElement(
+                            'div',
+                            null,
+                            _react2.default.createElement(
+                                _reactstrap.FormGroup,
+                                null,
+                                _react2.default.createElement(
+                                    _reactstrap.Label,
+                                    { 'for': 'drink-name' },
+                                    'Name'
+                                ),
+                                _react2.default.createElement(_reactstrap.Input, {
+                                    id: 'drink-name',
+                                    value: drink.name,
+                                    name: 'name',
+                                    onChange: this.onChange
+                                })
+                            ),
+                            _react2.default.createElement(
+                                _reactstrap.FormGroup,
+                                { row: true },
+                                _react2.default.createElement(
+                                    _reactstrap.Col,
+                                    { sm: 6 },
+                                    _react2.default.createElement(
+                                        _reactstrap.Label,
+                                        { 'for': 'drink-price' },
+                                        'Price'
+                                    ),
+                                    _react2.default.createElement(
+                                        _reactstrap.InputGroup,
+                                        null,
+                                        _react2.default.createElement(
+                                            _reactstrap.InputGroupAddon,
+                                            { addonType: 'prepend' },
+                                            '$'
+                                        ),
+                                        _react2.default.createElement(_reactstrap.Input, {
+                                            id: 'drink-price',
+                                            type: 'number',
+                                            step: '.01',
+                                            value: drink.price,
+                                            name: 'price',
+                                            onChange: this.onChange
+                                        })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _reactstrap.Col,
+                                    { sm: 6 },
+                                    _react2.default.createElement(
+                                        _reactstrap.Label,
+                                        { 'for': 'drink-dosage' },
+                                        'Dosage'
+                                    ),
+                                    _react2.default.createElement(
+                                        _reactstrap.InputGroup,
+                                        null,
+                                        _react2.default.createElement(_reactstrap.Input, {
+                                            id: 'drink-dosage',
+                                            type: 'number',
+                                            step: '1',
+                                            value: drink.dosage,
+                                            name: 'dosage',
+                                            onChange: this.onChange
+                                        }),
+                                        _react2.default.createElement(
+                                            _reactstrap.InputGroupAddon,
+                                            { addonType: 'append' },
+                                            'mg'
+                                        )
+                                    )
+                                )
+                            ),
+                            _react2.default.createElement(
+                                _reactstrap.FormGroup,
+                                null,
+                                _react2.default.createElement(
+                                    _reactstrap.Label,
+                                    { 'for': 'drink-description' },
+                                    'Description'
+                                ),
+                                _react2.default.createElement(_reactstrap.Input, {
+                                    id: 'drink-description',
+                                    type: 'textarea',
+                                    value: drink.description,
+                                    name: 'description',
+                                    onChange: this.onChange
+                                })
+                            )
+                        )
+                    ),
+                    !isAdmin ? _react2.default.createElement(
+                        _reactstrap.ModalFooter,
+                        null,
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            drink.dosage,
+                            'mg'
+                        ),
+                        _react2.default.createElement(
+                            _reactstrap.Button,
+                            { color: 'primary', onClick: this.drink },
+                            'Drink'
+                        ),
+                        _react2.default.createElement(
+                            _reactstrap.Button,
+                            { color: 'secondary', onClick: this.props.close },
+                            'Cancel'
+                        )
+                    ) : _react2.default.createElement(
+                        _reactstrap.ModalFooter,
+                        null,
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            drink.dosage,
+                            'mg'
+                        ),
+                        !this.state.drink.id ? '' : _react2.default.createElement(
+                            _reactstrap.Button,
+                            { color: 'primary', onClick: this.consume },
+                            'Drink'
+                        ),
+                        _react2.default.createElement(
+                            _reactstrap.Button,
+                            { color: 'secondary', onClick: this.props.close },
+                            'Cancel'
+                        ),
+                        _react2.default.createElement(
+                            _reactstrap.Button,
+                            { color: 'success', type: 'submit' },
+                            'Save'
+                        ),
+                        _react2.default.createElement(
+                            _reactstrap.Button,
+                            { color: 'danger', onClick: this.removeDrink },
+                            'Delete'
+                        )
                     )
                 )
             );

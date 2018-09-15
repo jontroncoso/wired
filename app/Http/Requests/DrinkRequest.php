@@ -23,11 +23,17 @@ class DrinkRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name'          => 'string|unique:drinks',
-            'description'   => 'string|unique:drinks',
+        $drink = $this->route('drink');
+        $return = [
+            'name'          => 'string|unique:drinks,name',
+            'description'   => 'string|unique:drinks,description',
             'dosage'        => 'integer|between:0,1000000',
             'price'         => 'numeric|between:0,1000000',
         ];
+        if($drink) {
+            $return['name'] .= ','.$drink->id;
+            $return['description'] .= ','.$drink->id;
+        }
+        return $return;
     }
 }
