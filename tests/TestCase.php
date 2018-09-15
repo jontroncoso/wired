@@ -45,8 +45,6 @@ abstract class TestCase extends BaseTestCase
      */
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {
-        \Log::info('$parameters');
-        \Log::info($parameters);
         if ($this->user) {
             $server['HTTP_AUTHORIZATION'] = 'Bearer ' . \JWTAuth::fromUser($this->user);
         }

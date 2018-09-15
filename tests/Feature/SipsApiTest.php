@@ -28,6 +28,7 @@ class SipsApiTest extends TestCase
         \App\Model\Sip::create([
             'user_id'   => $user->id,
             'drink_id'  => $drink->id,
+            'dosage'    => $drink->dosage,
         ]);
 
         $this->json('GET', '/api/sips/')

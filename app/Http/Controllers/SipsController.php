@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Model\Sip;
+use App\Model\Drink;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\SipRequest;
 
@@ -17,10 +19,7 @@ class SipsController extends Controller
     {
         $user = \Auth::user();
         return response()->json([
-            'sips'  => $user->sips()->orderBy('created_at', 'desc')->get()->map(function($sip){
-                $sip->append('dosage');
-                return $sip;
-            }),
+            'sips'  => $user->sips()->orderBy('created_at', 'desc')->get(),
             'bcl'   => $user->bcl,
         ]);
     }
@@ -33,8 +32,12 @@ class SipsController extends Controller
      */
     public function store(SipRequest $request)
     {
-        return response()->json([
-            'sip' => Sip::create($request->validated() + ['user_id' => \Auth::user()->id])
+        $drink  = Drink::find($request->get('drink_id'));
+        $sip    = Sip::create([
+            'drink_id'  => $drink->id,
+            'user_id'   => \Auth::user()->id,
+            'dosage'    => $drink->dosage,
         ]);
+        return response()->json(compact('sip'));
     }
 }

@@ -8,6 +8,9 @@ class Sip extends Pivot
 {
     protected $table = 'sips';
 
+    protected $fillable = ['drink_id', 'user_id', 'dosage'];
+
+
     public function drink()
     {
         return $this->belongsTo(\App\Model\Drink::class);
@@ -17,15 +20,13 @@ class Sip extends Pivot
         return $this->belongsTo(\App\Model\User::class);
     }
 
-    public function getDosageAttribute()
-    {
-        return $this->drink()->value('dosage');
-    }
+    // public function getDosageAttribute()
+    // {
+    //     return $this->drink()->value('dosage');
+    // }
 
     public function getCreatedAtAttribute($createdAt)
     {
-        \Log::info('$createdAt');
-        \Log::info($createdAt);
         return (new \Carbon\Carbon($createdAt))->timestamp;
     }
 }

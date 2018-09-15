@@ -27,6 +27,7 @@ class DrinkRequest extends FormRequest
             'name'          => 'string|unique:drinks',
             'description'   => 'string|unique:drinks',
             'dosage'        => 'integer|between:0,1000000',
+            'price'         => 'numeric|between:0,1000000',
         ];
     }
 }

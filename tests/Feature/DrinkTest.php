@@ -39,7 +39,11 @@ class DrinkTest extends TestCase
 
         $this->be($admin);
 
-        $this->json('POST', '/api/drinks/', $drink->toArray())
+        \Log::info('$drink->toArray() '.print_r($drink->toArray(), 1));
+        $response = $this->json('POST', '/api/drinks/', $drink->toArray());
+        \Log::info('$response');
+        \Log::info($response->getContent());
+        $response
             ->assertStatus(200)
             ->assertJsonFragment($drink->toArray());
 

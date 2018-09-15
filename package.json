@@ -40,8 +40,8 @@
         "lodash": "^4.17.4",
         "path": "^0.12.7",
         "popper.js": "^1.12",
-        "react": "^16.2.0",
-        "react-dom": "^16.2.0"
+        "react": "^16.5.0",
+        "react-dom": "^16.5.0"
     },
     "dependencies": {
         "emoji-dictionary": "^1.0.9",
@@ -49,6 +49,7 @@
         "moment": "^2.22.2",
         "react-redux": "^5.0.7",
         "react-router-dom": "^4.3.1",
+        "reactstrap": "^6.4.0",
         "redux": "^4.0.0",
         "redux-logger": "^3.0.6",
         "redux-thunk": "^2.3.0"

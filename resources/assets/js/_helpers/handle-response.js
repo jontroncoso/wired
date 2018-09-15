@@ -6,7 +6,6 @@ export function handleResponse(response) {
             if ([403,401].indexOf(response.status) > -1 )
             {
                 authActions.logout();
-                window.location.href = '/login';
             }
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);

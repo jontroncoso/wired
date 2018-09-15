@@ -37,6 +37,7 @@ class Prelaunch extends Migration
             $table->string('name')->index();
             $table->text('description');
             $table->integer('dosage')->unsigned();
+            $table->integer('price')->unsigned();
             $table->timestamps();
         });
         Schema::create('sips', function (Blueprint $table) {
@@ -45,6 +46,8 @@ class Prelaunch extends Migration
 
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->integer('dosage')->unsigned();
 
             $table->timestamps();
         });

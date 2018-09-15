@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { history, PrivateRoute } from '../_helpers';
@@ -12,7 +12,6 @@ class App extends React.Component {
 
         const { dispatch } = this.props;
         history.listen((location, action) => {
-            // clear alert on location change
             dispatch(alertActions.clear());
         });
     }
@@ -29,9 +28,14 @@ class App extends React.Component {
                             }
                             <Router history={history}>
                                 <div>
-                                    <PrivateRoute exact path="/" component={HomePage} />
                                     <Route path="/login" component={LoginPage} />
                                     <Route path="/register" component={RegisterPage} />
+                                    <Route exact path="/"  render={props => (
+                                        localStorage.getItem('user')
+                                            ? <Redirect to={{ pathname: '/cafe', state: { from: props.location } }} />
+                                            : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+                                    )} />
+                                    <PrivateRoute exact path="/cafe/:id?" component={HomePage} />
                                 </div>
                             </Router>
                         </div>

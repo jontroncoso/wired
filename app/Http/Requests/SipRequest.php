@@ -16,7 +16,6 @@ class SipRequest extends FormRequest
         if(FormRequest::isMethod('put'))
         {
             $params = FormRequest::route()->parameters();
-            \Log::info($params);
             return \Auth::user()->can('manage', $params['sip']);
         }
         return true;

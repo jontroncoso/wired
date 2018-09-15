@@ -11,7 +11,6 @@ export const authActions = {
 
 function login(email, password) {
     return dispatch => {
-        dispatch(request({ email }));
 
         // userService.login(email, password)
         const requestOptions = {
@@ -29,24 +28,18 @@ function login(email, password) {
                     history.push('/');
                 },
                 error => {
-                    dispatch(failure(error.toString()));
+                    dispatch({
+                        type: userConstants.LOGIN_FAILURE,
+                        error: error.toString(),
+                    });
                     dispatch(alertActions.error(error.toString()));
                 }
             );
     };
 
-    function request(user) { return { type: userConstants.LOGIN_REQUEST, user } }
-    function success(data) {
-        const me = data.me;
-        const user = data;
-        delete user.me;
-        return { type: userConstants.LOGIN_SUCCESS, user, me };
-    }
-    function failure(error) { return { type: userConstants.LOGIN_FAILURE, error } }
 }
 function getMe() {
     return dispatch => {
-        dispatch(request({ me: true }));
 
         // userService.login(email, password)
         const requestOptions = {
@@ -60,7 +53,6 @@ function getMe() {
             .then(
                 data => {
                     dispatch(success(data));
-                    history.push('/');
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -69,29 +61,11 @@ function getMe() {
             );
     };
 
-    function request(user) { return { type: userConstants.LOGIN_REQUEST, user } }
-    function success(data) {
-        const me = data.me;
-        const user = data;
-        delete user.me;
-        return { type: userConstants.LOGIN_SUCCESS, user, me };
-    }
     function failure(error) { return { type: userConstants.LOGIN_FAILURE, error } }
-}
-
-function logout() {
-    return dispatch => {
-        localStorage.removeItem('user');
-        dispatch({ type: userConstants.LOGOUT });
-        // window.location.href = '/';
-    };
-
 }
 
 function register(user) {
     return dispatch => {
-        dispatch(request(user));
-
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -114,13 +88,20 @@ function register(user) {
             );
     };
 
-    function request(user) { return { type: userConstants.REGISTER_REQUEST, user } }
-    function success(data) {
-        console.log('data.me ', data);
-        const me = data.me;
-        const user = data;
-        delete user.me;
-        return { type: userConstants.LOGIN_SUCCESS, user, me };
-    }
     function failure(error) { return { type: userConstants.REGISTER_FAILURE, error } }
+}
+
+function logout() {
+    return dispatch => {
+        localStorage.removeItem('user');
+        dispatch({ type: userConstants.LOGOUT });
+    };
+
+}
+
+function success(data) {
+    const me = data.me;
+    const user = data;
+    delete user.me;
+    return { type: userConstants.LOGIN_SUCCESS, user, me };
 }

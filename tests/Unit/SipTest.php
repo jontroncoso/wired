@@ -24,6 +24,7 @@ class SipTest extends TestCase
         \App\Model\Sip::create([
             'user_id'   => $user->id,
             'drink_id'  => $drink->id,
+            'dosage'    => $drink->dosage,
         ]);
         $firstBcl = $user->bcl;
         $this->assertEquals($user->sips()->count(), 1);

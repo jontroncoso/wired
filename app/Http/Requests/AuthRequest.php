@@ -28,8 +28,7 @@ class AuthRequest extends FormRequest
             'email'     => 'required|email|exists:users,email',
             'password'  => 'required|string',
         ];
-        \Log::info('FormRequest::path()');
-        \Log::info(FormRequest::path());
+
         if(FormRequest::path() == 'api/auth/register')
         {
             $return['email']        = 'required|email|unique:users,email';

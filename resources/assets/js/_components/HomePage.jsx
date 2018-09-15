@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { drinkActions, sipActions, authActions } from '../_actions';
 
 import { timer, halfLife, healthPercentage, displayFace } from '../_helpers';
+
+import { DrinkModal } from '../_shared';
 
 class HomePage extends React.Component {
 
@@ -12,6 +15,20 @@ class HomePage extends React.Component {
         speechBubble: '',
         amount: 0,
         formattedSips: [],
+    };
+
+    constructor(props) {
+        super(props);
+        if (props.match.params.id) {
+            props.dispatch(drinkActions.get(props.match.params.id));
+        }
+    }
+
+    componentDidUpdate(previousProps)
+    {
+        if (this.props.match.params.id && this.props.match.params.id !== previousProps.match.params.id) {
+            this.props.dispatch(drinkActions.get(this.props.match.params.id));
+        }
     }
 
     componentDidMount() {
@@ -23,15 +40,15 @@ class HomePage extends React.Component {
         }
     }
 
-    tick = () => {
+    tick = (returnObject = false) => {
         const unix_now = Math.round((new Date()).getTime());
         const me = this.props.users.item ? this.props.users.item : [];
         const formattedSips = (this.props.sips.items ? this.props.sips.items : [])
             .map(sip => {
                 const amount = halfLife({sip, unix_now, metabolism: me.metabolism});
                 const health = healthPercentage({amount});
-                console.log('amount ', amount);
-                console.log('health ', health);
+                // console.log('amount ', amount);
+                // console.log('health ', health);
                 const drink = this.props.drinks.items.find(d => d.id === sip.drink_id);
                 const momentCreated = moment.unix(sip.created_at);
                 return {
@@ -44,13 +61,14 @@ class HomePage extends React.Component {
             });
         const amount = formattedSips.reduce((a, b) => a + b.amount, 0);
         const health = healthPercentage({amount});
-
-        this.setState({
+        const newState = {
             amount,
             health,
             formattedSips,
             face: displayFace({health}),
-        });
+        };
+        if(returnObject) { return newState; }
+        this.setState(newState);
     }
 
     componentWillUnmount() {
@@ -65,16 +83,17 @@ class HomePage extends React.Component {
     logout = e =>
     {
         this.props.dispatch(authActions.logout());
-        window.location.href = '/';
+        window.location.href = '/login';
+    }
+
+    closeModal = e => {
+        this.props.dispatch(drinkActions.closeModal());
+        this.props.history.push('/cafe');
     }
 
     render() {
         const { user, drinks } = this.props;
-        // const sips = this.props.sips.items.map(sip => {
-        //     sip.drink = drinks.items.find(d => d.id === sip.drink_id);
-        //     sip.momentCreated = moment.unix(sip.created_at);
-        //     return sip;
-        // });
+
         return (
             <div className="row store-front">
                 <div className="col-12"><button onClick={this.logout} className="btn btn-primary">Log Out</button></div>
@@ -83,22 +102,22 @@ class HomePage extends React.Component {
                     {drinks.error && <span className="text-danger">ERROR: {drinks.error}</span>}
 
                     {drinks.items &&
-                        <ul className="chalkboard chalk list-group">
-                            <li className="list-group-item">
-                                <h1 className="chalk-fancy">Wired Cafe</h1>
-                            </li>
+                        <div className="chalkboard chalk list-group">
+                            <h1 className="chalk-fancy">Wired Cafe</h1>
                             {drinks.items.map((drink, index) =>
-                                <li
+                                <Link
                                     key={drink.id}
-                                    className="list-group-item"
                                     onMouseOver={this.onMouseOver(drink)}
                                     onMouseOut={this.onMouseOut}
-                                    onClick={this.consume(drink)}
+                                    className="btn-link btn-lg list-item"
+                                    to={'/cafe/' + drink.id}
                                     >
-                                    <button className="btn-link btn btn-lg">{drink.name}</button> <small> - {drink.dosage}mg</small>
-                                </li>
+                                    <span>{drink.name}</span>
+                                     <small> - {drink.dosage}mg</small>
+                                     <small> - ${drink.price}</small>
+                                </Link>
                             )}
-                        </ul>
+                        </div>
                     }
                 </div>
                 <div className="col-md-6 in-front">
@@ -117,8 +136,8 @@ class HomePage extends React.Component {
                     <div className="log">
                         {this.state.formattedSips.map((sip, index) =>
                             (
-                                <div className="log-entry">
-                                    <h4>{sip.drink.name}</h4>
+                                <div className="log-entry" key={sip.drink_id + '-' + sip.user_id + '-' + sip.created_at}>
+                                    <h4>{sip.drink.name} | {sip.id}</h4>
                                     <div className="health-bar">
                                         <div className="progress" style={{width: sip.health + '%'}}>
                                             <span className={sip.health < 20 ? 'aligned-left' : 'aligned-right'}>{Math.round(sip.amount)}mg</span>
@@ -130,6 +149,11 @@ class HomePage extends React.Component {
                         )}
                     </div>
                 </div>
+                <DrinkModal
+                    drink={drinks.item}
+                    open={drinks.openModal}
+                    close={this.closeModal}
+                    ></DrinkModal>
             </div>
 
         );
