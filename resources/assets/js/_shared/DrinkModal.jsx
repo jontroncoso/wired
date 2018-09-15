@@ -116,7 +116,7 @@ export class DrinkModal extends React.Component {
                     { !isAdmin ?
                         (<ModalFooter>
                             <span>{drink.dosage}mg</span>
-                            <Button color="primary" onClick={this.drink}>Drink</Button>
+                            <Button color="primary" onClick={this.consume}>Drink</Button>
                             <Button color="secondary" onClick={this.props.close}>Cancel</Button>
                         </ModalFooter>)
                         :

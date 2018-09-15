@@ -56030,7 +56030,7 @@ var DrinkModal = exports.DrinkModal = function (_React$Component) {
                         ),
                         _react2.default.createElement(
                             _reactstrap.Button,
-                            { color: 'primary', onClick: this.drink },
+                            { color: 'primary', onClick: this.consume },
                             'Drink'
                         ),
                         _react2.default.createElement(
