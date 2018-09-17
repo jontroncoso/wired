@@ -12,9 +12,9 @@ function error(errors) {
 function errorFromResponse(data) {
     return {
         type: validationConstants.ERROR,
-        errors: data.errors,
+        errors: data.errors ? data.errors : {},
     };
 }
 function clear() {
-    return { type: validationConstants.CLEAR };
+    return { type: validationConstants.CLEAR, errors: {} };
 }

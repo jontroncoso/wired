@@ -31,6 +31,11 @@ class HomePage extends React.Component {
         if (this.props.drinks.modalPosition === 'closed' && this.props.drinks.modalPosition !== previousProps.drinks.modalPosition) {
             this.closeModal();
         }
+
+        if(this.props.contact.modalPosition === 'closed' && this.props.contact.modalPosition !== previousProps.contact.modalPosition){
+            this.toggleContactModal();
+        }
+
     }
 
     componentDidMount() {
@@ -179,15 +184,9 @@ class HomePage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { authentication, drinks, sips, users, alert } = state;
+    const { authentication, drinks, sips, users, alert, contact } = state;
     const { user } = authentication;
-    return {
-        user,
-        drinks,
-        sips,
-        users,
-        alert,
-    };
+    return { user, authentication, drinks, sips, users, alert, contact };
 }
 
 const connectedHomePage = connect(mapStateToProps)(HomePage);

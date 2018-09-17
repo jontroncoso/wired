@@ -17,7 +17,11 @@ function save(contactParams) {
         return fetch('/api/contact', requestOptions)
             .then(handleResponse)
             .then(
-                data => dispatch({ type: contactConstants.POST_SUCCESS }),
+                data =>
+                {
+                    dispatch({ type: contactConstants.POST_SUCCESS });
+                    dispatch(alertActions.success(data.message));
+                },
                 error =>
                 {
                     dispatch(alertActions.errorFromResponse(error));

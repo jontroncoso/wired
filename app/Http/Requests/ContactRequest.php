@@ -25,8 +25,8 @@ class ContactRequest extends FormRequest
     public function rules()
     {
         return [
-            'subject'   => ['string', new NoSsn],
-            'body'      => 'string',
+            'subject'   => ['required', 'min: 5', 'string', new NoSsn],
+            'body'      => ['required', 'min: 5', 'string', new NoSsn],
         ];
     }
 }

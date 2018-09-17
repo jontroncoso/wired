@@ -7,6 +7,7 @@ import { drinks } from './drinks.reducer';
 import { sips } from './sips.reducer';
 import { users } from './users.reducer';
 import { alert } from './alert.reducer';
+import { contact } from './contact.reducer';
 
 const rootReducer = combineReducers({
     authentication,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
     users,
     drinks,
     sips,
-    alert
+    alert,
+    contact,
 });
 
 export default rootReducer;

@@ -22,7 +22,7 @@ import {
 import { contactActions, validationActions } from '../_actions';
 class ContactModal extends React.Component {
 
-    state = { contact:
+    state = { contactForm:
         {
             subject: '',
             body: '',
@@ -31,23 +31,36 @@ class ContactModal extends React.Component {
 
     onChange = e =>
     {
-        this.setState({contact: { ...this.state.contact, [e.target.name]: e.target.value }});
-        this.props.dispatch(validationActions
-            .error({
-                [e.target.name]: (
-                    e.target.value.search(/[0-9]{3}[^0-9][0-9]{2}[^0-9][0-9]{4}/) > -1
-                    ? ['SSN detected! Please don\'t pass sensitive information!']
-                    : []
-                )}));
+        this.setState({contactForm: { ...this.state.contactForm, [e.target.name]: e.target.value }});
+        this.validateText(e.target.name, e.target.value);
+    }
+    validateText = (name, value) => {
+        const validated = (value.search(/[0-9]{3}[^0-9][0-9]{2}[^0-9][0-9]{4}/) === -1);
+        const existingErrors = this.props.validation.errors[name] ? this.props.validation.errors[name] : [];
+        const errorMessage = 'SSN detected! Please don\'t pass sensitive information!';
+
+        // need to add error to errors
+        if(!validated && existingErrors.indexOf(errorMessage) === -1)
+        {
+            existingErrors.push(errorMessage);
+            this.props.dispatch(validationActions.error({ [name]: existingErrors }));
+        }
+
+        // need to remove all errors
+        if(validated && existingErrors.indexOf(errorMessage) > -1)
+        {
+            this.props.dispatch(validationActions.error({ [name]: [] }));
+        }
     }
     sendMessage = e => {
         e.preventDefault();
-        this.props.dispatch(contactActions.save(this.state.contact));
+        this.props.dispatch(contactActions.save(this.state.contactForm));
     }
 
     render() {
-        const { contact } = this.state;
+        const { contactForm } = this.state;
         const { validation } = this.props;
+
         return (
             <Modal isOpen={this.props.open}>
                 <Form onSubmit={this.sendMessage}>
@@ -56,7 +69,7 @@ class ContactModal extends React.Component {
                         <FormGroup>
                             <Input
                                 id="contact-subject"
-                                value={contact.subject}
+                                value={contactForm.subject}
                                 name="subject"
                                 onChange={this.onChange}
                                 placeholder="Subject"
@@ -68,7 +81,7 @@ class ContactModal extends React.Component {
                         <Input
                             id="contact-body"
                             type="textarea"
-                            value={contact.body}
+                            value={contactForm.body}
                             name="body"
                             onChange={this.onChange}
                             placeholder="Message"
@@ -88,8 +101,8 @@ class ContactModal extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { validation, contact } = state;
-    return { validation, contact };
+    const { validation } = state;
+    return { validation };
 }
 
 const connectedContactModal = connect(mapStateToProps)(ContactModal);
