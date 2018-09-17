@@ -31,4 +31,5 @@ Route::group([
 Route::group(['middleware' => 'auth:api'], function() {
     Route::apiResource('sips', 'SipsController');
     Route::apiResource('drinks', 'DrinkController');
+    Route::post('contact', 'ContactController@send');
 });

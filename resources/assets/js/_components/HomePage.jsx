@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import { drinkActions, sipActions, authActions } from '../_actions';
 import { timer, halfLife, healthPercentage, displayFace } from '../_helpers';
-import { DrinkModal } from '../_shared';
+import { DrinkModal, ContactModal } from '../_shared';
 
 class HomePage extends React.Component {
 
@@ -42,6 +42,10 @@ class HomePage extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        clearInterval(this.state.timer);
+    }
+
     tick = (returnObject = false) => {
         const unix_now = Math.round((new Date()).getTime());
         const me = this.props.users.item ? this.props.users.item : [];
@@ -73,14 +77,8 @@ class HomePage extends React.Component {
         this.setState(newState);
     }
 
-    componentWillUnmount() {
-        clearInterval(this.state.timer);
-    }
-
     onMouseOver = drink => e => this.setState({speechBubble: drink.description});
     onMouseOut = e => this.setState({speechBubble: ''});
-
-    createDrinkModal = e => this.props.dispatch(drinkActions.createDrinkModal());
 
     logout = e =>
     {
@@ -88,6 +86,7 @@ class HomePage extends React.Component {
         window.location.href = '/login';
     }
 
+    createDrinkModal = e => this.props.dispatch(drinkActions.createDrinkModal());
     closeModal = e => {
         this.props.dispatch(drinkActions.closeModal());
         this.props.dispatch(drinkActions.getAll());
@@ -95,15 +94,17 @@ class HomePage extends React.Component {
         this.props.history.push('/cafe');
     }
 
+    toggleContactModal = e => this.setState({ contactModalPosition: !this.state.contactModalPosition });
 
     render() {
-        const { users, drinks } = this.props;
+        const { users, drinks, alert } = this.props;
 
         return (
             <div className="row store-front">
                 <div className="col-12">
                     <button onClick={this.logout} className="btn btn-primary">Log Out</button>
                     <button onClick={this.createDrinkModal} className="btn btn-success">Add Drink</button>
+                    <button onClick={this.toggleContactModal} className="btn btn-secondary">Contact Me</button>
                 </div>
                 <div className="col-md-6">
                     {drinks.loading && <em>Loading drinks...</em>}
@@ -157,6 +158,13 @@ class HomePage extends React.Component {
                         )}
                     </div>
                 </div>
+                <ContactModal
+                    errors={alert.errors}
+                    dispatch={this.props.dispatch}
+                    open={!!this.state.contactModalPosition}
+                    close={this.toggleContactModal}
+                    ></ContactModal>
+
                 <DrinkModal
                     open={drinks.modalPosition === 'open'}
                     dispatch={this.props.dispatch}
@@ -171,13 +179,14 @@ class HomePage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { authentication, drinks, sips, users } = state;
+    const { authentication, drinks, sips, users, alert } = state;
     const { user } = authentication;
     return {
         user,
         drinks,
         sips,
         users,
+        alert,
     };
 }
 

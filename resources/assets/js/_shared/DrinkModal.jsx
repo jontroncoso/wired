@@ -17,7 +17,7 @@ import {
     InputGroupAddon,
 } from 'reactstrap';
 
-import { drinkActions, sipActions } from '../_actions';
+import { contactActions } from '../_actions';
 export class DrinkModal extends React.Component {
 
     state = { drink:
