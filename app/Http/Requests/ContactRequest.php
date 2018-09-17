@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\NoSsn;
 
 class ContactRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class ContactRequest extends FormRequest
     public function rules()
     {
         return [
-            'subject'   => 'string',
+            'subject'   => ['string', new NoSsn],
             'body'      => 'string',
         ];
     }
