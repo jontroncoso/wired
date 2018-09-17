@@ -1,6 +1,7 @@
 /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import {
     Button,
     Col,
@@ -18,8 +19,8 @@ import {
     InputGroupAddon,
 } from 'reactstrap';
 
-import { contactActions } from '../_actions';
-export class ContactModal extends React.Component {
+import { contactActions, validationActions } from '../_actions';
+class ContactModal extends React.Component {
 
     state = { contact:
         {
@@ -28,14 +29,25 @@ export class ContactModal extends React.Component {
         }
     };
 
-    onChange = e => this.setState({contact: { ...this.state.contact, [e.target.name]: e.target.value }})
+    onChange = e =>
+    {
+        this.setState({contact: { ...this.state.contact, [e.target.name]: e.target.value }});
+        this.props.dispatch(validationActions
+            .error({
+                [e.target.name]: (
+                    e.target.value.search(/[0-9]{3}[^0-9][0-9]{2}[^0-9][0-9]{4}/) > -1
+                    ? ['SSN detected! Please don\'t pass sensitive information!']
+                    : []
+                )}));
+    }
     sendMessage = e => {
         e.preventDefault();
-        this.props.dispatch(contactActions.save(this.state.contact)).then(() => {}, this.props.close);
+        this.props.dispatch(contactActions.save(this.state.contact));
     }
 
     render() {
         const { contact } = this.state;
+        const { validation } = this.props;
         return (
             <Modal isOpen={this.props.open}>
                 <Form onSubmit={this.sendMessage}>
@@ -48,8 +60,10 @@ export class ContactModal extends React.Component {
                                 name="subject"
                                 onChange={this.onChange}
                                 placeholder="Subject"
+                                invalid={validation.errors.subject && validation.errors.subject.length > 0}
                                 />
-                            { !this.props.errors ? '' : (<FormFeedback>{this.props.errors.subject}</FormFeedback>) }
+                            { !(validation.errors.subject && validation.errors.subject.length) ? ''
+                                : validation.errors.subject.map((error, index) => <FormFeedback key={index}>{error}</FormFeedback>) }
                         </FormGroup>
                         <Input
                             id="contact-body"
@@ -58,7 +72,10 @@ export class ContactModal extends React.Component {
                             name="body"
                             onChange={this.onChange}
                             placeholder="Message"
+                            invalid={validation.errors.body && validation.errors.body.length > 0}
                             />
+                        { !(validation.errors.body && validation.errors.body.length) ? ''
+                            : validation.errors.body.map((error, index) => <FormFeedback key={index}>{error}</FormFeedback>) }
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" type="submit">Save</Button>
@@ -69,3 +86,11 @@ export class ContactModal extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    const { validation, contact } = state;
+    return { validation, contact };
+}
+
+const connectedContactModal = connect(mapStateToProps)(ContactModal);
+export { connectedContactModal as ContactModal };

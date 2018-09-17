@@ -1,5 +1,5 @@
 import { contactConstants } from '../_constants';
-import { alertActions } from './';
+import { alertActions, validationActions } from '.';
 import { history, handleResponse, authHeader } from '../_helpers';
 
 export const contactActions = { save };
@@ -7,7 +7,7 @@ export const contactActions = { save };
 function save(contactParams) {
     console.log('save: contactParams ', contactParams);
     return dispatch => {
-
+        dispatch({ type: contactConstants.POST_REQUEST });
         const requestOptions = {
             method: 'POST',
             headers: authHeader(),
@@ -18,7 +18,11 @@ function save(contactParams) {
             .then(handleResponse)
             .then(
                 data => dispatch({ type: contactConstants.POST_SUCCESS }),
-                error => dispatch(alertActions.errorFromResponse(error))
+                error =>
+                {
+                    dispatch(alertActions.errorFromResponse(error));
+                    dispatch(validationActions.errorFromResponse(error));
+                }
             );
     };
 

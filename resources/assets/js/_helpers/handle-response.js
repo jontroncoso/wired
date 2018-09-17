@@ -7,8 +7,8 @@ export function handleResponse(response) {
             {
                 authActions.logout();
             }
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
+            // const error = (data && data.message) || response.statusText;
+            return Promise.reject(data);
         }
 
         return data;

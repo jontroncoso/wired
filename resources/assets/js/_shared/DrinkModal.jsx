@@ -48,7 +48,7 @@ export class DrinkModal extends React.Component {
 
     render() {
         const { drink } = this.state;
-        const { isAdmin, validation } = this.props;
+        const { isAdmin } = this.props;
         if(!drink) return (<div></div>);
         return (
             <Modal isOpen={this.props.open} toggle={this.props.close} className={this.props.className}>

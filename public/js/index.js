@@ -4695,6 +4695,18 @@ Object.keys(_auth).forEach(function (key) {
   });
 });
 
+var _validation = __webpack_require__(268);
+
+Object.keys(_validation).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _validation[key];
+    }
+  });
+});
+
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -4818,6 +4830,18 @@ Object.keys(_contact).forEach(function (key) {
     enumerable: true,
     get: function get() {
       return _contact[key];
+    }
+  });
+});
+
+var _validation = __webpack_require__(267);
+
+Object.keys(_validation).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _validation[key];
     }
   });
 });
@@ -49186,6 +49210,8 @@ var _authentication = __webpack_require__(201);
 
 var _registration = __webpack_require__(206);
 
+var _validation = __webpack_require__(266);
+
 var _drinks = __webpack_require__(207);
 
 var _sips = __webpack_require__(208);
@@ -49197,6 +49223,7 @@ var _alert = __webpack_require__(210);
 var rootReducer = (0, _redux.combineReducers)({
     authentication: _authentication.authentication,
     registration: _registration.registration,
+    validation: _validation.validation,
     users: _users.users,
     drinks: _drinks.drinks,
     sips: _sips.sips,
@@ -49587,7 +49614,9 @@ var _constants = __webpack_require__(5);
 var alertActions = exports.alertActions = {
     success: success,
     error: error,
-    clear: clear
+    clear: clear,
+    manualValidationError: manualValidationError,
+    errorFromResponse: errorFromResponse
 };
 
 function success(message) {
@@ -49597,15 +49626,14 @@ function success(message) {
 function error(message) {
     return { type: _constants.alertConstants.ERROR, message: message };
 }
+function manualValidationError(errors) {
+    return { type: _constants.alertConstants.ERROR, message: '', errors: errors };
+}
 function errorFromResponse(data) {
-    var responseObject = { type: _constants.alertConstants.ERROR };
-    if (data.errors) {
-        responseObject.errors = data.errors;
-    }
-    if (data.message) {
-        responseObject.message = data.message;
-    }
-    return responseObject;
+    return {
+        type: _constants.alertConstants.ERROR,
+        message: data.message
+    };
 }
 
 function clear() {
@@ -50034,8 +50062,8 @@ function handleResponse(response) {
             if ([403, 401].indexOf(response.status) > -1) {
                 _actions.authActions.logout();
             }
-            var error = data && data.message || response.statusText;
-            return Promise.reject(error);
+            // const error = (data && data.message) || response.statusText;
+            return Promise.reject(data);
         }
 
         return data;
@@ -55558,9 +55586,7 @@ var DrinkModal = exports.DrinkModal = function (_React$Component) {
         key: 'render',
         value: function render() {
             var drink = this.state.drink;
-            var _props = this.props,
-                isAdmin = _props.isAdmin,
-                validation = _props.validation;
+            var isAdmin = this.props.isAdmin;
 
             if (!drink) return _react2.default.createElement('div', null);
             return _react2.default.createElement(
@@ -55756,6 +55782,8 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactRedux = __webpack_require__(9);
+
 var _reactstrap = __webpack_require__(23);
 
 var _actions = __webpack_require__(3);
@@ -55770,7 +55798,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
 
-var ContactModal = exports.ContactModal = function (_React$Component) {
+var ContactModal = function (_React$Component) {
     _inherits(ContactModal, _React$Component);
 
     function ContactModal() {
@@ -55789,10 +55817,11 @@ var ContactModal = exports.ContactModal = function (_React$Component) {
                 body: ''
             }
         }, _this.onChange = function (e) {
-            return _this.setState({ contact: _extends({}, _this.state.contact, _defineProperty({}, e.target.name, e.target.value)) });
+            _this.setState({ contact: _extends({}, _this.state.contact, _defineProperty({}, e.target.name, e.target.value)) });
+            _this.props.dispatch(_actions.validationActions.error(_defineProperty({}, e.target.name, e.target.value.search(/[0-9]{3}[^0-9][0-9]{2}[^0-9][0-9]{4}/) > -1 ? ['SSN detected! Please don\'t pass sensitive information!'] : [])));
         }, _this.sendMessage = function (e) {
             e.preventDefault();
-            _this.props.dispatch(_actions.contactActions.save(_this.state.contact)).then(function () {}, _this.props.close);
+            _this.props.dispatch(_actions.contactActions.save(_this.state.contact));
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -55800,6 +55829,7 @@ var ContactModal = exports.ContactModal = function (_React$Component) {
         key: 'render',
         value: function render() {
             var contact = this.state.contact;
+            var validation = this.props.validation;
 
             return _react2.default.createElement(
                 _reactstrap.Modal,
@@ -55823,13 +55853,16 @@ var ContactModal = exports.ContactModal = function (_React$Component) {
                                 value: contact.subject,
                                 name: 'subject',
                                 onChange: this.onChange,
-                                placeholder: 'Subject'
+                                placeholder: 'Subject',
+                                invalid: validation.errors.subject && validation.errors.subject.length > 0
                             }),
-                            !this.props.errors ? '' : _react2.default.createElement(
-                                _reactstrap.FormFeedback,
-                                null,
-                                this.props.errors.subject
-                            )
+                            !(validation.errors.subject && validation.errors.subject.length) ? '' : validation.errors.subject.map(function (error, index) {
+                                return _react2.default.createElement(
+                                    _reactstrap.FormFeedback,
+                                    { key: index },
+                                    error
+                                );
+                            })
                         ),
                         _react2.default.createElement(_reactstrap.Input, {
                             id: 'contact-body',
@@ -55837,7 +55870,15 @@ var ContactModal = exports.ContactModal = function (_React$Component) {
                             value: contact.body,
                             name: 'body',
                             onChange: this.onChange,
-                            placeholder: 'Message'
+                            placeholder: 'Message',
+                            invalid: validation.errors.body && validation.errors.body.length > 0
+                        }),
+                        !(validation.errors.body && validation.errors.body.length) ? '' : validation.errors.body.map(function (error, index) {
+                            return _react2.default.createElement(
+                                _reactstrap.FormFeedback,
+                                { key: index },
+                                error
+                            );
                         })
                     ),
                     _react2.default.createElement(
@@ -55861,6 +55902,16 @@ var ContactModal = exports.ContactModal = function (_React$Component) {
 
     return ContactModal;
 }(_react2.default.Component);
+
+function mapStateToProps(state) {
+    var validation = state.validation,
+        contact = state.contact;
+
+    return { validation: validation, contact: contact };
+}
+
+var connectedContactModal = (0, _reactRedux.connect)(mapStateToProps)(ContactModal);
+exports.ContactModal = connectedContactModal;
 
 /***/ }),
 /* 257 */
@@ -56284,7 +56335,7 @@ var contactActions = exports.contactActions = { save: save };
 function save(contactParams) {
     console.log('save: contactParams ', contactParams);
     return function (dispatch) {
-
+        dispatch({ type: _constants.contactConstants.POST_REQUEST });
         var requestOptions = {
             method: 'POST',
             headers: (0, _helpers.authHeader)(),
@@ -56294,7 +56345,8 @@ function save(contactParams) {
         return fetch('/api/contact', requestOptions).then(_helpers.handleResponse).then(function (data) {
             return dispatch({ type: _constants.contactConstants.POST_SUCCESS });
         }, function (error) {
-            return dispatch(_.alertActions.errorFromResponse(error));
+            dispatch(_.alertActions.errorFromResponse(error));
+            dispatch(_.validationActions.errorFromResponse(error));
         });
     };
 
@@ -56318,6 +56370,82 @@ var contactConstants = exports.contactConstants = {
     POST_SUCCESS: 'DRINKS_POST_SUCCESS',
     POST_FAILURE: 'DRINKS_POST_FAILURE'
 };
+
+/***/ }),
+/* 266 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.validation = validation;
+
+var _constants = __webpack_require__(5);
+
+function validation() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { errors: {} };
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _constants.validationConstants.CLEAR:
+            return { errors: {} };
+        case _constants.validationConstants.ERROR:
+            return { errors: action.errors };
+        default:
+            return state;
+    }
+}
+
+/***/ }),
+/* 267 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var validationConstants = exports.validationConstants = {
+    ERROR: 'VALIDATION_ERROR',
+    CLEAR: 'VALIDATION_CLEAR'
+};
+
+/***/ }),
+/* 268 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.validationActions = undefined;
+
+var _constants = __webpack_require__(5);
+
+var validationActions = exports.validationActions = {
+    error: error,
+    errorFromResponse: errorFromResponse,
+    clear: clear
+};
+
+function error(errors) {
+    return { type: _constants.validationConstants.ERROR, errors: errors };
+}
+function errorFromResponse(data) {
+    return {
+        type: _constants.validationConstants.ERROR,
+        errors: data.errors
+    };
+}
+function clear() {
+    return { type: _constants.validationConstants.CLEAR };
+}
 
 /***/ })
 /******/ ]);
