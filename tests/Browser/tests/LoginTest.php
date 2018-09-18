@@ -43,7 +43,7 @@ class LoginTest extends DuskTestCase
                 {
                     $chalkboard
                         ->assertSee('Wired Cafe')
-                        ->assertSee($drink->dosage.'mg')
+                        ->assertSee($drink->name)
                         ->mouseover('@lastDrink')
                         ;
                 })

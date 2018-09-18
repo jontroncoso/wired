@@ -2,13 +2,18 @@
 
 namespace Tests\Browser\tests;
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\RegisterPage;
 use Tests\Browser\Pages\HomePage;
+use Tests\Browser\Pages\ContactPage;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Faker\Factory;
+
+use App\Model\User;
 
 class ContactTest extends DuskTestCase
 {
@@ -45,7 +50,7 @@ class ContactTest extends DuskTestCase
                 ->assertVisible('@bodyWithError')
 
                 ->click('@submit')
-                ->assertVisible('@subjectWithError')
+                ->waitFor('@subjectWithError')
                 ->assertVisible('@bodyWithError')
 
 

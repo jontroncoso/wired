@@ -4,7 +4,7 @@ namespace Tests\Browser\Pages;
 
 use Laravel\Dusk\Browser;
 
-class LoginPage extends Page
+class ContactPage extends Page
 {
     /**
      * Get the URL for the page.
@@ -35,12 +35,12 @@ class LoginPage extends Page
     public function elements()
     {
         return [
-            '@subject'          => 'input[name="subject"]',
-            '@body'             => 'input[name="body"]',
-            '@subjectWithError' => 'input[name="subject"].is-invalid',
-            '@bodyWithError'    => 'input[name="body"].is-invalid',
-            '@submit'           => 'button.btn-primary.btn',
-            '@errorMessage'     => '.invalid-feedback',
+            '@subject'          => '.modal input[name="subject"]',
+            '@body'             => '.modal textarea[name="body"]',
+            '@subjectWithError' => '.modal input[name="subject"].is-invalid',
+            '@bodyWithError'    => '.modal textarea[name="body"].is-invalid',
+            '@submit'           => '.modal button.btn-primary.btn',
+            '@errorMessage'     => '.modal .invalid-feedback',
         ];
     }
 }

@@ -13,7 +13,7 @@ class HomePage extends Page
      */
     public function url()
     {
-        return '/';
+        return '/cafe';
     }
 
     /**
@@ -36,7 +36,7 @@ class HomePage extends Page
     {
         return [
             '@chalkboard'   => '.chalkboard',
-            '@lastDrink'    => 'li:last-child button',
+            '@lastDrink'    => 'a.list-item:last-child',
             '@speechBubble' => '.speech-bubble',
             '@contactButton' => '.store-front .btn-secondary',
         ];
