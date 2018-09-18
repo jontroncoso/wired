@@ -4,7 +4,7 @@ namespace Tests\Browser\Pages;
 
 use Laravel\Dusk\Browser;
 
-class HomePage extends Page
+class LoginPage extends Page
 {
     /**
      * Get the URL for the page.
@@ -13,7 +13,7 @@ class HomePage extends Page
      */
     public function url()
     {
-        return '/';
+        return '/cafe';
     }
 
     /**
@@ -24,7 +24,7 @@ class HomePage extends Page
      */
     public function assert(Browser $browser)
     {
-        $browser->assertPathIs($this->url());
+        // $browser->assertPathIs($this->url());
     }
 
     /**
@@ -35,10 +35,12 @@ class HomePage extends Page
     public function elements()
     {
         return [
-            '@chalkboard'   => '.chalkboard',
-            '@lastDrink'    => 'li:last-child button',
-            '@speechBubble' => '.speech-bubble',
-            '@contactButton' => '.store-front .btn-secondary',
+            '@subject'          => 'input[name="subject"]',
+            '@body'             => 'input[name="body"]',
+            '@subjectWithError' => 'input[name="subject"].is-invalid',
+            '@bodyWithError'    => 'input[name="body"].is-invalid',
+            '@submit'           => 'button.btn-primary.btn',
+            '@errorMessage'     => '.invalid-feedback',
         ];
     }
 }

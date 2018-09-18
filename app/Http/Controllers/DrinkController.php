@@ -51,8 +51,6 @@ class DrinkController extends Controller
      */
     public function update(DrinkRequest $request, Drink $drink)
     {
-        \Log::info('$request->validated()');
-        \Log::info($request->validated());
         $drink->update($request->validated());
         return response()->json(['drink' => $drink]);
     }
