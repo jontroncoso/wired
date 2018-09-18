@@ -3,6 +3,7 @@
 namespace Tests\Browser\tests;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Mail;
 
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\RegisterPage;
@@ -13,6 +14,7 @@ use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use Faker\Factory;
 
+use App\Mail\Contact;
 use App\Model\User;
 
 class ContactTest extends DuskTestCase
@@ -30,7 +32,7 @@ class ContactTest extends DuskTestCase
         $jon  = User::find(2);
         $user   = factory(User::class)->create();
         $this->browse(function (Browser $browser) use ($user, $jon, $body, $subject) {
-            // Mail::fake();
+            // $mail = $browser->fake(Mail::class);
             $browser->visit('/')
                 ->on(new LoginPage)
                 ->assertSee('Login')
@@ -57,9 +59,13 @@ class ContactTest extends DuskTestCase
                 ->type('@subject', $subject)
                 ->type('@body', $body)
                 ->click('@submit')
-                ->waitUntilMissing('@subject')
-                ->assertSee('Thank you. You\'re message has been sent')
+                // ->waitUntilMissing('@subject')
+                // ->assertSee('Thank you. You\'re message has been sent')
                 ;
+            // $mail->assertSent(Contact::class, function ($mail) use ($jon, $subject) {
+            //     return $mail->hasTo($jon->email) && $mail->subject == 'WIRED CONTACT: '.$subject;
+            // });
+
         });
     }
 }
