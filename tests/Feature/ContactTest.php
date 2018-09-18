@@ -35,6 +35,9 @@ class ContactTest extends TestCase
         $this->json('POST', '/api/contact')
             ->assertStatus(422);
 
+        $this->json('POST', '/api/contact', ['subject' => $subject, 'body' => $body.' '.$faker->ssn])
+            ->assertStatus(422);
+
         $this->json('POST', '/api/contact', ['subject' => $subject, 'body' => $body])
             ->assertStatus(200);
 
