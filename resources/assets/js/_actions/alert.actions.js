@@ -21,7 +21,7 @@ function manualValidationError(errors) {
 function errorFromResponse(data) {
     return {
         type: alertConstants.ERROR,
-        message: data.message,
+        message: data.message.toString(),
     };
 }
 

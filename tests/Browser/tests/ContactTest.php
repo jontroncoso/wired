@@ -33,7 +33,7 @@ class ContactTest extends DuskTestCase
         $user   = factory(User::class)->create();
         $this->browse(function (Browser $browser) use ($user, $jon, $body, $subject) {
             // $mail = $browser->fake(Mail::class);
-            $browser->visit('/')
+            $browser->visit('/login')
                 ->on(new LoginPage)
                 ->assertSee('Login')
                 ->type('@email', $user->email)
@@ -41,6 +41,7 @@ class ContactTest extends DuskTestCase
                 ->click('@submit')
                 ->waitUntilMissing('@email')
 
+                ->visit('/cafe')
                 ->on(new Cafe)
                 ->click('@contactButton')
 

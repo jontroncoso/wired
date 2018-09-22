@@ -8,6 +8,7 @@ import { sips } from './sips.reducer';
 import { users } from './users.reducer';
 import { alert } from './alert.reducer';
 import { contact } from './contact.reducer';
+import { pokemon } from './pokemon.reducer';
 
 const rootReducer = combineReducers({
     authentication,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     sips,
     alert,
     contact,
+    pokemon,
 });
 
 export default rootReducer;

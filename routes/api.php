@@ -25,8 +25,9 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::post('register', 'AuthController@register');
     Route::get('me', 'AuthController@me');
-
 });
+
+Route::get('pokemon/{term}', 'PokemonController@search');
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::apiResource('sips', 'SipsController');

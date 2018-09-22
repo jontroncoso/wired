@@ -22,7 +22,7 @@ class LoginTest extends DuskTestCase
         $user = factory(\App\Model\User::class)->make(['password' => bcrypt('password')]);
         $drink = factory(\App\Model\Drink::class)->create();
         $this->browse(function (Browser $browser) use ($user, $drink) {
-            $browser->visit('/')
+            $browser->visit('/login')
                 ->on(new LoginPage)
                 ->assertSee('Login')
                 ->assertVisible('@email')
@@ -38,6 +38,7 @@ class LoginTest extends DuskTestCase
                 ->click('@submit')
                 ->waitUntilMissing('@email')
 
+                ->visit('/cafe')
                 ->on(new Cafe)
                 ->whenAvailable('@chalkboard', function($chalkboard) use ($drink)
                 {
