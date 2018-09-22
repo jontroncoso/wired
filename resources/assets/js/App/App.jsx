@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { history, PrivateRoute } from '../_helpers';
 import { alertActions } from '../_actions';
-import { HomePage, LoginPage, RegisterPage } from '../_components';
+import { Cafe, LoginPage, RegisterPage } from '../_components';
 
 class App extends React.Component {
     constructor(props) {
@@ -36,7 +36,7 @@ class App extends React.Component {
                                             ? <Redirect to={{ pathname: '/cafe', state: { from: props.location } }} />
                                             : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
                                     )} />
-                                <PrivateRoute logout={authentication.logout} exact path="/cafe/:id?" component={HomePage} />
+                                <PrivateRoute logout={authentication.logout} exact path="/cafe/:id?" component={Cafe} />
                                 </div>
                             </Router>
                         </div>

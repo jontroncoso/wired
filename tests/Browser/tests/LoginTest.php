@@ -4,7 +4,7 @@ namespace Tests\Browser\tests;
 
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\RegisterPage;
-use Tests\Browser\Pages\HomePage;
+use Tests\Browser\Pages\Cafe;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
@@ -38,7 +38,7 @@ class LoginTest extends DuskTestCase
                 ->click('@submit')
                 ->waitUntilMissing('@email')
 
-                ->on(new HomePage)
+                ->on(new Cafe)
                 ->whenAvailable('@chalkboard', function($chalkboard) use ($drink)
                 {
                     $chalkboard

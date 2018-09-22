@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Mail;
 
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\RegisterPage;
-use Tests\Browser\Pages\HomePage;
+use Tests\Browser\Pages\Cafe;
 use Tests\Browser\Pages\ContactPage;
 
 use Tests\DuskTestCase;
@@ -41,7 +41,7 @@ class ContactTest extends DuskTestCase
                 ->click('@submit')
                 ->waitUntilMissing('@email')
 
-                ->on(new HomePage)
+                ->on(new Cafe)
                 ->click('@contactButton')
 
                 ->on(new ContactPage)

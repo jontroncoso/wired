@@ -8,7 +8,7 @@ import { drinkActions, sipActions, authActions } from '../_actions';
 import { timer, halfLife, healthPercentage, displayFace } from '../_helpers';
 import { DrinkModal, ContactModal } from '../_shared';
 
-class HomePage extends React.Component {
+class Cafe extends React.Component {
 
     state = {
         speechBubble: '',
@@ -189,5 +189,5 @@ function mapStateToProps(state) {
     return { user, authentication, drinks, sips, users, alert, contact };
 }
 
-const connectedHomePage = connect(mapStateToProps)(HomePage);
-export { connectedHomePage as HomePage };
+const connectedCafe = connect(mapStateToProps)(Cafe);
+export { connectedCafe as Cafe };
